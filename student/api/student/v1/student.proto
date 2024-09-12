@@ -7,24 +7,57 @@ import "google/api/annotations.proto";
 option go_package = "student/api/student/v1;v1";
 
 service Student {
-	rpc CreateStudent (CreateStudentRequest) returns (CreateStudentReply);
-	rpc UpdateStudent (UpdateStudentRequest) returns (UpdateStudentReply);
-	rpc DeleteStudent (DeleteStudentRequest) returns (DeleteStudentReply);
-	rpc GetStudent (GetStudentRequest) returns (GetStudentReply){
+	rpc CreateStudent (CreateStudentRequest) returns (CreateStudentReply){
 		option(google.api.http) = {
-			get:"/student/{id}"
+			post:"/student",
+			body:"*",
 		};
 	}
-	rpc ListStudent (ListStudentRequest) returns (ListStudentReply);
+	rpc UpdateStudent (UpdateStudentRequest) returns (UpdateStudentReply){
+		option(google.api.http) = {
+			put:"/student/{id}",
+			body:"*",
+		};
+	}
+	rpc DeleteStudent (DeleteStudentRequest) returns (DeleteStudentReply){
+		option(google.api.http) = {
+			delete:"/student/{id}",
+		};
+	}
+	rpc GetStudent (GetStudentRequest) returns (GetStudentReply){
+		option(google.api.http) = {
+			get:"/student/{id}",
+		};
+	}
+	rpc ListStudent (ListStudentRequest) returns (ListStudentReply){
+		option(google.api.http) = {
+			get:"/student/list",
+		};
+	}
 }
 
-message CreateStudentRequest {}
-message CreateStudentReply {}
+message CreateStudentRequest {
+//	int32 id = 1;
+	string name = 2;
+	string info = 3;
+	int32 status = 4;
+}
+message CreateStudentReply {
+	int32 code = 1; //状态码,表示成功与否
+	string message = 2;
+}
 
-message UpdateStudentRequest {}
+message UpdateStudentRequest {
+	int32 id = 1;
+	string name = 2;
+	string info = 3;
+	int32 status = 4;
+}
 message UpdateStudentReply {}
 
-message DeleteStudentRequest {}
+message DeleteStudentRequest {
+	int32 id = 1;
+}
 message DeleteStudentReply {}
 
 message GetStudentRequest {

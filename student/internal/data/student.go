@@ -37,3 +37,29 @@ func (r *studentRepo) GetStudent(ctx context.Context, id int32) (*biz.Student, e
 		CreatedAt: stu.CreatedAt,
 	}, nil
 }
+func (r *studentRepo) CreateStudent(ctx context.Context, stu *biz.Student) error {
+	err := r.data.gormDB.Create(stu).Error
+	if err != nil {
+		return err
+	}
+	r.log.WithContext(ctx).Info("gormDB: CreateStudent")
+	return nil
+}
+
+func (r *studentRepo) UpdateStudent(ctx context.Context, stu *biz.Student) (*biz.Student, error) {
+	err := r.data.gormDB.Where("id = ?", stu.ID).Updates(stu).Error
+	if err != nil {
+		return nil, err
+	}
+	r.log.WithContext(ctx).Info("gormDB: UpdateStudent: id: ", stu.ID)
+	return stu, nil
+}
+
+func (r *studentRepo) DeleteStudent(ctx context.Context, id int32) error {
+	err := r.data.gormDB.Where("id = ?", id).Delete(&biz.Student{}).Error
+	if err != nil {
+		return err
+	}
+	r.log.WithContext(ctx).Info("gormDB: DeleteStudent: id: ", id)
+	return nil
+}

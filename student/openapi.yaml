@@ -6,6 +6,36 @@ info:
     title: Student API
     version: 0.0.1
 paths:
+    /student:
+        post:
+            tags:
+                - Student
+            operationId: Student_CreateStudent
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/api.student.v1.CreateStudentRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.student.v1.CreateStudentReply'
+    /student/list:
+        get:
+            tags:
+                - Student
+            operationId: Student_ListStudent
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.student.v1.ListStudentReply'
     /student/{id}:
         get:
             tags:
@@ -24,16 +54,74 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/GetStudentReply'
-                default:
-                    description: Default error response
+                                $ref: '#/components/schemas/api.student.v1.GetStudentReply'
+        put:
+            tags:
+                - Student
+            operationId: Student_UpdateStudent
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: int32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/api.student.v1.UpdateStudentRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Status'
+                                $ref: '#/components/schemas/api.student.v1.UpdateStudentReply'
+        delete:
+            tags:
+                - Student
+            operationId: Student_DeleteStudent
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: int32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.student.v1.DeleteStudentReply'
 components:
     schemas:
-        GetStudentReply:
+        api.student.v1.CreateStudentReply:
+            type: object
+            properties:
+                code:
+                    type: integer
+                    format: int32
+                message:
+                    type: string
+        api.student.v1.CreateStudentRequest:
+            type: object
+            properties:
+                name:
+                    type: string
+                    description: int32 id = 1;
+                info:
+                    type: string
+                status:
+                    type: integer
+                    format: int32
+        api.student.v1.DeleteStudentReply:
+            type: object
+            properties: {}
+        api.student.v1.GetStudentReply:
             type: object
             properties:
                 name:
@@ -44,29 +132,24 @@ components:
                 id:
                     type: integer
                     format: int32
-        GoogleProtobufAny:
+        api.student.v1.ListStudentReply:
+            type: object
+            properties: {}
+        api.student.v1.UpdateStudentReply:
+            type: object
+            properties: {}
+        api.student.v1.UpdateStudentRequest:
             type: object
             properties:
-                '@type':
-                    type: string
-                    description: The type of the serialized message.
-            additionalProperties: true
-            description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.
-        Status:
-            type: object
-            properties:
-                code:
+                id:
                     type: integer
-                    description: The status code, which should be an enum value of [google.rpc.Code][google.rpc.Code].
                     format: int32
-                message:
+                name:
                     type: string
-                    description: A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the [google.rpc.Status.details][google.rpc.Status.details] field, or localized by the client.
-                details:
-                    type: array
-                    items:
-                        $ref: '#/components/schemas/GoogleProtobufAny'
-                    description: A list of messages that carry the error details.  There is a common set of message types for APIs to use.
-            description: 'The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).'
+                info:
+                    type: string
+                status:
+                    type: integer
+                    format: int32
 tags:
     - name: Student

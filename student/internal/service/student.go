@@ -21,12 +21,36 @@ func NewStudentService(stu *biz.StudentUsecase, logger log.Logger) *StudentServi
 }
 
 func (s *StudentService) CreateStudent(ctx context.Context, req *pb.CreateStudentRequest) (*pb.CreateStudentReply, error) {
-	return &pb.CreateStudentReply{}, nil
+	err := s.student.Create(ctx, &biz.Student{
+		Name:   req.Name,
+		Info:   req.Info,
+		Status: req.Status,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &pb.CreateStudentReply{
+		Code:    2000,
+		Message: "创建学生成功",
+	}, nil
 }
 func (s *StudentService) UpdateStudent(ctx context.Context, req *pb.UpdateStudentRequest) (*pb.UpdateStudentReply, error) {
+	_, err := s.student.Update(ctx, &biz.Student{
+		ID:     req.Id,
+		Name:   req.Name,
+		Info:   req.Info,
+		Status: req.Status,
+	})
+	if err != nil {
+		return nil, err
+	}
 	return &pb.UpdateStudentReply{}, nil
 }
 func (s *StudentService) DeleteStudent(ctx context.Context, req *pb.DeleteStudentRequest) (*pb.DeleteStudentReply, error) {
+	err := s.student.Delete(ctx, req.Id)
+	if err != nil {
+		return nil, err
+	}
 	return &pb.DeleteStudentReply{}, nil
 }
 func (s *StudentService) GetStudent(ctx context.Context, req *pb.GetStudentRequest) (*pb.GetStudentReply, error) {
@@ -40,6 +64,7 @@ func (s *StudentService) GetStudent(ctx context.Context, req *pb.GetStudentReque
 		Name:   stu.Name,
 	}, nil
 }
+
 func (s *StudentService) ListStudent(ctx context.Context, req *pb.ListStudentRequest) (*pb.ListStudentReply, error) {
 	return &pb.ListStudentReply{}, nil
 }
