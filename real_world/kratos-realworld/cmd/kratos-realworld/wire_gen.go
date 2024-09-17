@@ -24,13 +24,18 @@ import (
 
 // wireApp init kratos application.
 func wireApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*kratos.App, func(), error) {
-	dataData, cleanup, err := data.NewData(confData, logger)
+	db := data.NewMySQL(confData)
+	dataData, cleanup, err := data.NewData(confData, logger, db)
 	if err != nil {
 		return nil, nil, err
 	}
-	greeterRepo := data.NewGreeterRepo(dataData, logger)
-	greeterUsecase := biz.NewGreeterUsecase(greeterRepo, logger)
-	realWorldService := service.NewRealWorldService(greeterUsecase)
+	userRepo := data.NewUserRepo(dataData, logger)
+	userUsecase := biz.NewUserUsecase(userRepo)
+	commentRepo := data.NewCommentRepo(dataData, logger)
+	articleRepo := data.NewArticleRepo(dataData, logger)
+	tagRepo := data.NewTagRepo(dataData, logger)
+	socialUsecase := biz.NewSocialUsecase(commentRepo, articleRepo, tagRepo, logger)
+	realWorldService := service.NewRealWorldService(userUsecase, socialUsecase)
 	grpcServer := server.NewGRPCServer(confServer, realWorldService, logger)
 	httpServer := server.NewHTTPServer(confServer, realWorldService, logger)
 	app := newApp(logger, grpcServer, httpServer)

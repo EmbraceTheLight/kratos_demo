@@ -89,7 +89,7 @@ service RealWorld {
             delete: "api/articles/{slug}",
         };
     }
-    rpc AddComment(AddCommentRequest) returns (SingleArticleReply) {
+    rpc AddComment(AddCommentRequest) returns (SingleCommentReply) {
         option (google.api.http) = {
             post: "api/articles/{slug}/comments",
             body: "*",

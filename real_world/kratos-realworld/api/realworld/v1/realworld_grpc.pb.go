@@ -66,7 +66,7 @@ type RealWorldClient interface {
 	CreateArticle(ctx context.Context, in *CreateArticleRequest, opts ...grpc.CallOption) (*SingleArticleReply, error)
 	UpdateArticle(ctx context.Context, in *UpdateArticleRequest, opts ...grpc.CallOption) (*SingleArticleReply, error)
 	DeleteArticle(ctx context.Context, in *DeleteArticleRequest, opts ...grpc.CallOption) (*DeleteArticleReply, error)
-	AddComment(ctx context.Context, in *AddCommentRequest, opts ...grpc.CallOption) (*SingleArticleReply, error)
+	AddComment(ctx context.Context, in *AddCommentRequest, opts ...grpc.CallOption) (*SingleCommentReply, error)
 	GetComments(ctx context.Context, in *GetCommentsRequest, opts ...grpc.CallOption) (*MultipleCommentsReply, error)
 	DeleteComments(ctx context.Context, in *DeleteCommentsRequest, opts ...grpc.CallOption) (*MultipleCommentsReply, error)
 	FavoriteArticle(ctx context.Context, in *FavoriteArticleRequest, opts ...grpc.CallOption) (*SingleArticleReply, error)
@@ -212,9 +212,9 @@ func (c *realWorldClient) DeleteArticle(ctx context.Context, in *DeleteArticleRe
 	return out, nil
 }
 
-func (c *realWorldClient) AddComment(ctx context.Context, in *AddCommentRequest, opts ...grpc.CallOption) (*SingleArticleReply, error) {
+func (c *realWorldClient) AddComment(ctx context.Context, in *AddCommentRequest, opts ...grpc.CallOption) (*SingleCommentReply, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SingleArticleReply)
+	out := new(SingleCommentReply)
 	err := c.cc.Invoke(ctx, RealWorld_AddComment_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -298,7 +298,7 @@ type RealWorldServer interface {
 	CreateArticle(context.Context, *CreateArticleRequest) (*SingleArticleReply, error)
 	UpdateArticle(context.Context, *UpdateArticleRequest) (*SingleArticleReply, error)
 	DeleteArticle(context.Context, *DeleteArticleRequest) (*DeleteArticleReply, error)
-	AddComment(context.Context, *AddCommentRequest) (*SingleArticleReply, error)
+	AddComment(context.Context, *AddCommentRequest) (*SingleCommentReply, error)
 	GetComments(context.Context, *GetCommentsRequest) (*MultipleCommentsReply, error)
 	DeleteComments(context.Context, *DeleteCommentsRequest) (*MultipleCommentsReply, error)
 	FavoriteArticle(context.Context, *FavoriteArticleRequest) (*SingleArticleReply, error)
@@ -353,7 +353,7 @@ func (UnimplementedRealWorldServer) UpdateArticle(context.Context, *UpdateArticl
 func (UnimplementedRealWorldServer) DeleteArticle(context.Context, *DeleteArticleRequest) (*DeleteArticleReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteArticle not implemented")
 }
-func (UnimplementedRealWorldServer) AddComment(context.Context, *AddCommentRequest) (*SingleArticleReply, error) {
+func (UnimplementedRealWorldServer) AddComment(context.Context, *AddCommentRequest) (*SingleCommentReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddComment not implemented")
 }
 func (UnimplementedRealWorldServer) GetComments(context.Context, *GetCommentsRequest) (*MultipleCommentsReply, error) {

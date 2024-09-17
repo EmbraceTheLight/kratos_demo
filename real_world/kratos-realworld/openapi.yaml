@@ -262,7 +262,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/realworld.v1.SingleArticleReply'
+                                $ref: '#/components/schemas/realworld.v1.SingleCommentReply'
     api/articles/{slug}/comments/{id}:
         delete:
             tags:
@@ -620,6 +620,38 @@ components:
                     format: uint32
                 author:
                     $ref: '#/components/schemas/realworld.v1.Author'
+        realworld.v1.SingleCommentReply:
+            type: object
+            properties:
+                comment:
+                    $ref: '#/components/schemas/realworld.v1.SingleCommentReply_Comment'
+        realworld.v1.SingleCommentReply_Author:
+            type: object
+            properties:
+                username:
+                    type: string
+                bio:
+                    type: string
+                image:
+                    type: string
+                following:
+                    type: boolean
+        realworld.v1.SingleCommentReply_Comment:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                createdAt:
+                    type: string
+                    format: date-time
+                updatedAt:
+                    type: string
+                    format: date-time
+                body:
+                    type: string
+                author:
+                    $ref: '#/components/schemas/realworld.v1.SingleCommentReply_Author'
         realworld.v1.TasLIstReply:
             type: object
             properties:

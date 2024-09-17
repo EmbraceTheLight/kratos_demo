@@ -40,7 +40,7 @@ const OperationRealWorldUpdateArticle = "/realworld.v1.RealWorld/UpdateArticle"
 const OperationRealWorldUpdateUser = "/realworld.v1.RealWorld/UpdateUser"
 
 type RealWorldHTTPServer interface {
-	AddComment(context.Context, *AddCommentRequest) (*SingleArticleReply, error)
+	AddComment(context.Context, *AddCommentRequest) (*SingleCommentReply, error)
 	CreateArticle(context.Context, *CreateArticleRequest) (*SingleArticleReply, error)
 	DeleteArticle(context.Context, *DeleteArticleRequest) (*DeleteArticleReply, error)
 	DeleteComments(context.Context, *DeleteCommentsRequest) (*MultipleCommentsReply, error)
@@ -393,7 +393,7 @@ func _RealWorld_AddComment0_HTTP_Handler(srv RealWorldHTTPServer) func(ctx http.
 		if err != nil {
 			return err
 		}
-		reply := out.(*SingleArticleReply)
+		reply := out.(*SingleCommentReply)
 		return ctx.Result(200, reply)
 	}
 }
@@ -509,7 +509,7 @@ func _RealWorld_GetTags0_HTTP_Handler(srv RealWorldHTTPServer) func(ctx http.Con
 }
 
 type RealWorldHTTPClient interface {
-	AddComment(ctx context.Context, req *AddCommentRequest, opts ...http.CallOption) (rsp *SingleArticleReply, err error)
+	AddComment(ctx context.Context, req *AddCommentRequest, opts ...http.CallOption) (rsp *SingleCommentReply, err error)
 	CreateArticle(ctx context.Context, req *CreateArticleRequest, opts ...http.CallOption) (rsp *SingleArticleReply, err error)
 	DeleteArticle(ctx context.Context, req *DeleteArticleRequest, opts ...http.CallOption) (rsp *DeleteArticleReply, err error)
 	DeleteComments(ctx context.Context, req *DeleteCommentsRequest, opts ...http.CallOption) (rsp *MultipleCommentsReply, err error)
@@ -538,8 +538,8 @@ func NewRealWorldHTTPClient(client *http.Client) RealWorldHTTPClient {
 	return &RealWorldHTTPClientImpl{client}
 }
 
-func (c *RealWorldHTTPClientImpl) AddComment(ctx context.Context, in *AddCommentRequest, opts ...http.CallOption) (*SingleArticleReply, error) {
-	var out SingleArticleReply
+func (c *RealWorldHTTPClientImpl) AddComment(ctx context.Context, in *AddCommentRequest, opts ...http.CallOption) (*SingleCommentReply, error) {
+	var out SingleCommentReply
 	pattern := "api/articles/{slug}/comments"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationRealWorldAddComment))
