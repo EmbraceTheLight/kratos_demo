@@ -11,7 +11,11 @@ type userRepo struct {
 	log  *log.Helper
 }
 
-// NewTagRepo .
+func (ur *userRepo) GetUserByEmail(ctx context.Context, email string) (*biz.User, error) {
+	return nil, nil
+}
+
+// NewUserRepo .
 func NewUserRepo(data *Data, logger log.Logger) biz.UserRepo {
 	return &userRepo{
 		data: data,

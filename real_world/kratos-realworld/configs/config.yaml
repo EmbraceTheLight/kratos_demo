@@ -5,6 +5,7 @@ server:
   grpc:
     addr: 0.0.0.0:9000
     timeout: 1s
+
 data:
   database:
     driver: mysql
@@ -13,3 +14,6 @@ data:
     addr: 127.0.0.1:6379
     read_timeout: 0.2s
     write_timeout: 0.2s
+
+jwt:
+  secret: "b25cbd2b77454e275ce1236860839130f5fb615020bdb4f025308c6b0f0dc5ed"
