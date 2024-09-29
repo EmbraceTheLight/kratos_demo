@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"github.com/go-kratos/kratos/v2/middleware/selector"
+	"github.com/gorilla/handlers"
 	v1 "kratos-realworld/api/realworld/v1"
 	"kratos-realworld/internal/conf"
 	"kratos-realworld/internal/pkg/middleware/auth"
@@ -41,6 +42,12 @@ func NewHTTPServer(c *conf.Server, realWorldService *service.RealWorldService, j
 				auth.JwtAuth(jwt.Secret),
 			).Match(NewWhitelistMatcher()).Build(),
 		),
+		http.Filter(
+			handlers.CORS(
+				handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}),
+				handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}),
+				handlers.AllowedOrigins([]string{"*"}),
+			)),
 	}
 	if c.Http.Network != "" {
 		opts = append(opts, http.Network(c.Http.Network))
