@@ -1,0 +1,22 @@
+server:
+  http:
+    addr: 0.0.0.0:8000
+    timeout: 10s
+  grpc:
+    addr: 0.0.0.0:9000
+    timeout: 10s
+data:
+  mysql:
+    driver: mysql
+    source: root:YTGyhPntlpcYxs17Up3d@tcp(127.0.0.1:3306)/kratos_demo_shop_user?parseTime=True&loc=Local
+    max_idle: 10
+    max_open: 100
+  redis:
+    addr: 127.0.0.1:6379
+    password: "F095PfRdmuw5efTZJ2jf"
+    db: 0
+    dial_timeout: 1s
+    read_timeout: 0.2s
+    write_timeout: 0.2s
+trace:    # 链路追踪参数
+  endpoint: http://127.0.0.1:14268/api/traces
