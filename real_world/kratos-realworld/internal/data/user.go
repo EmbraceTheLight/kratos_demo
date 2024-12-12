@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/go-kratos/kratos/v2/log"
 	"kratos-realworld/internal/biz"
+	"kratos-realworld/internal/data/models"
 )
 
 type userRepo struct {
@@ -24,5 +25,13 @@ func NewUserRepo(data *Data, logger log.Logger) biz.UserRepo {
 }
 
 func (ur *userRepo) CreateUser(ctx context.Context, user *biz.User) error {
-	return nil
+	u := &models.User{
+		Email:        user.Email,
+		Username:     user.Username,
+		Bio:          user.Bio,
+		Image:        user.Image,
+		PasswordHash: user.PasswordHash,
+	}
+	ret := ur.data.mysqlDB.Create(u)
+	return ret.Error
 }

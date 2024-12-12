@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/handlers"
 	v1 "kratos-realworld/api/realworld/v1"
 	"kratos-realworld/internal/conf"
+	"kratos-realworld/internal/encoder"
 	"kratos-realworld/internal/pkg/middleware/auth"
 	"kratos-realworld/internal/service"
 
@@ -36,6 +37,7 @@ func NewWhitelistMatcher() selector.MatchFunc {
 // NewHTTPServer new an HTTP server.
 func NewHTTPServer(c *conf.Server, realWorldService *service.RealWorldService, jwt *conf.JWT, logger log.Logger) *http.Server {
 	var opts = []http.ServerOption{
+		http.ErrorEncoder(encoder.ErrorEncoder),
 		http.Middleware(
 			recovery.Recovery(),
 			selector.Server(

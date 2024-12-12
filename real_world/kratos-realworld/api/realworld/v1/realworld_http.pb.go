@@ -73,21 +73,21 @@ func RegisterRealWorldHTTPServer(s *http.Server, srv RealWorldHTTPServer) {
 	r.POST("/api/users", _RealWorld_Register0_HTTP_Handler(srv))
 	r.GET("/api/user", _RealWorld_GetCurrentUser0_HTTP_Handler(srv))
 	r.PUT("/api/user", _RealWorld_UpdateUser0_HTTP_Handler(srv))
-	r.GET("api/profiles/{username}", _RealWorld_GetProfile0_HTTP_Handler(srv))
-	r.POST("api/profiles/{username}/follow", _RealWorld_FollowUser0_HTTP_Handler(srv))
-	r.DELETE("api/profiles/{username}/follow", _RealWorld_UnFollowUser0_HTTP_Handler(srv))
-	r.GET("api/articles", _RealWorld_ListArticles0_HTTP_Handler(srv))
-	r.GET("api/articles/feed", _RealWorld_FeedArticles0_HTTP_Handler(srv))
-	r.GET("api/articles/{slug}", _RealWorld_GetArticle0_HTTP_Handler(srv))
-	r.POST("api/articles", _RealWorld_CreateArticle0_HTTP_Handler(srv))
-	r.PUT("api/articles/{slug}", _RealWorld_UpdateArticle0_HTTP_Handler(srv))
-	r.DELETE("api/articles/{slug}", _RealWorld_DeleteArticle0_HTTP_Handler(srv))
-	r.POST("api/articles/{slug}/comments", _RealWorld_AddComment0_HTTP_Handler(srv))
-	r.GET("api/articles/{slug}/comments", _RealWorld_GetComments0_HTTP_Handler(srv))
-	r.DELETE("api/articles/{slug}/comments/{id}", _RealWorld_DeleteComments0_HTTP_Handler(srv))
-	r.POST("api/articles/{slug}/favorite", _RealWorld_FavoriteArticle0_HTTP_Handler(srv))
-	r.GET("api/articles/{slug}/favorite", _RealWorld_UnFavoriteArticle0_HTTP_Handler(srv))
-	r.GET("api/tags", _RealWorld_GetTags0_HTTP_Handler(srv))
+	r.GET("/api/profiles/{username}", _RealWorld_GetProfile0_HTTP_Handler(srv))
+	r.POST("/api/profiles/{username}/follow", _RealWorld_FollowUser0_HTTP_Handler(srv))
+	r.DELETE("/api/profiles/{username}/follow", _RealWorld_UnFollowUser0_HTTP_Handler(srv))
+	r.GET("/api/articles", _RealWorld_ListArticles0_HTTP_Handler(srv))
+	r.GET("/api/articles/feed", _RealWorld_FeedArticles0_HTTP_Handler(srv))
+	r.GET("/api/articles/{slug}", _RealWorld_GetArticle0_HTTP_Handler(srv))
+	r.POST("/api/articles", _RealWorld_CreateArticle0_HTTP_Handler(srv))
+	r.PUT("/api/articles/{slug}", _RealWorld_UpdateArticle0_HTTP_Handler(srv))
+	r.DELETE("/api/articles/{slug}", _RealWorld_DeleteArticle0_HTTP_Handler(srv))
+	r.POST("/api/articles/{slug}/comments", _RealWorld_AddComment0_HTTP_Handler(srv))
+	r.GET("/api/articles/{slug}/comments", _RealWorld_GetComments0_HTTP_Handler(srv))
+	r.DELETE("/api/articles/{slug}/comments/{id}", _RealWorld_DeleteComments0_HTTP_Handler(srv))
+	r.POST("/api/articles/{slug}/favorite", _RealWorld_FavoriteArticle0_HTTP_Handler(srv))
+	r.GET("/api/articles/{slug}/favorite", _RealWorld_UnFavoriteArticle0_HTTP_Handler(srv))
+	r.GET("/api/tags", _RealWorld_GetTags0_HTTP_Handler(srv))
 }
 
 func _RealWorld_Login0_HTTP_Handler(srv RealWorldHTTPServer) func(ctx http.Context) error {
@@ -540,7 +540,7 @@ func NewRealWorldHTTPClient(client *http.Client) RealWorldHTTPClient {
 
 func (c *RealWorldHTTPClientImpl) AddComment(ctx context.Context, in *AddCommentRequest, opts ...http.CallOption) (*SingleCommentReply, error) {
 	var out SingleCommentReply
-	pattern := "api/articles/{slug}/comments"
+	pattern := "/api/articles/{slug}/comments"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationRealWorldAddComment))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -553,7 +553,7 @@ func (c *RealWorldHTTPClientImpl) AddComment(ctx context.Context, in *AddComment
 
 func (c *RealWorldHTTPClientImpl) CreateArticle(ctx context.Context, in *CreateArticleRequest, opts ...http.CallOption) (*SingleArticleReply, error) {
 	var out SingleArticleReply
-	pattern := "api/articles"
+	pattern := "/api/articles"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationRealWorldCreateArticle))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -566,7 +566,7 @@ func (c *RealWorldHTTPClientImpl) CreateArticle(ctx context.Context, in *CreateA
 
 func (c *RealWorldHTTPClientImpl) DeleteArticle(ctx context.Context, in *DeleteArticleRequest, opts ...http.CallOption) (*DeleteArticleReply, error) {
 	var out DeleteArticleReply
-	pattern := "api/articles/{slug}"
+	pattern := "/api/articles/{slug}"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationRealWorldDeleteArticle))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -579,7 +579,7 @@ func (c *RealWorldHTTPClientImpl) DeleteArticle(ctx context.Context, in *DeleteA
 
 func (c *RealWorldHTTPClientImpl) DeleteComments(ctx context.Context, in *DeleteCommentsRequest, opts ...http.CallOption) (*MultipleCommentsReply, error) {
 	var out MultipleCommentsReply
-	pattern := "api/articles/{slug}/comments/{id}"
+	pattern := "/api/articles/{slug}/comments/{id}"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationRealWorldDeleteComments))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -592,7 +592,7 @@ func (c *RealWorldHTTPClientImpl) DeleteComments(ctx context.Context, in *Delete
 
 func (c *RealWorldHTTPClientImpl) FavoriteArticle(ctx context.Context, in *FavoriteArticleRequest, opts ...http.CallOption) (*SingleArticleReply, error) {
 	var out SingleArticleReply
-	pattern := "api/articles/{slug}/favorite"
+	pattern := "/api/articles/{slug}/favorite"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationRealWorldFavoriteArticle))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -605,7 +605,7 @@ func (c *RealWorldHTTPClientImpl) FavoriteArticle(ctx context.Context, in *Favor
 
 func (c *RealWorldHTTPClientImpl) FeedArticles(ctx context.Context, in *FeedArticlesRequest, opts ...http.CallOption) (*MultipleArticlesReply, error) {
 	var out MultipleArticlesReply
-	pattern := "api/articles/feed"
+	pattern := "/api/articles/feed"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationRealWorldFeedArticles))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -618,7 +618,7 @@ func (c *RealWorldHTTPClientImpl) FeedArticles(ctx context.Context, in *FeedArti
 
 func (c *RealWorldHTTPClientImpl) FollowUser(ctx context.Context, in *FollowUserRequest, opts ...http.CallOption) (*ProfileReply, error) {
 	var out ProfileReply
-	pattern := "api/profiles/{username}/follow"
+	pattern := "/api/profiles/{username}/follow"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationRealWorldFollowUser))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -631,7 +631,7 @@ func (c *RealWorldHTTPClientImpl) FollowUser(ctx context.Context, in *FollowUser
 
 func (c *RealWorldHTTPClientImpl) GetArticle(ctx context.Context, in *GetArticleRequest, opts ...http.CallOption) (*SingleArticleReply, error) {
 	var out SingleArticleReply
-	pattern := "api/articles/{slug}"
+	pattern := "/api/articles/{slug}"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationRealWorldGetArticle))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -644,7 +644,7 @@ func (c *RealWorldHTTPClientImpl) GetArticle(ctx context.Context, in *GetArticle
 
 func (c *RealWorldHTTPClientImpl) GetComments(ctx context.Context, in *GetCommentsRequest, opts ...http.CallOption) (*MultipleCommentsReply, error) {
 	var out MultipleCommentsReply
-	pattern := "api/articles/{slug}/comments"
+	pattern := "/api/articles/{slug}/comments"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationRealWorldGetComments))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -670,7 +670,7 @@ func (c *RealWorldHTTPClientImpl) GetCurrentUser(ctx context.Context, in *EmptyR
 
 func (c *RealWorldHTTPClientImpl) GetProfile(ctx context.Context, in *GetProfileRequest, opts ...http.CallOption) (*ProfileReply, error) {
 	var out ProfileReply
-	pattern := "api/profiles/{username}"
+	pattern := "/api/profiles/{username}"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationRealWorldGetProfile))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -683,7 +683,7 @@ func (c *RealWorldHTTPClientImpl) GetProfile(ctx context.Context, in *GetProfile
 
 func (c *RealWorldHTTPClientImpl) GetTags(ctx context.Context, in *EmptyRequest, opts ...http.CallOption) (*TasLIstReply, error) {
 	var out TasLIstReply
-	pattern := "api/tags"
+	pattern := "/api/tags"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationRealWorldGetTags))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -696,7 +696,7 @@ func (c *RealWorldHTTPClientImpl) GetTags(ctx context.Context, in *EmptyRequest,
 
 func (c *RealWorldHTTPClientImpl) ListArticles(ctx context.Context, in *ListArticlesRequest, opts ...http.CallOption) (*MultipleArticlesReply, error) {
 	var out MultipleArticlesReply
-	pattern := "api/articles"
+	pattern := "/api/articles"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationRealWorldListArticles))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -735,7 +735,7 @@ func (c *RealWorldHTTPClientImpl) Register(ctx context.Context, in *RegisterRequ
 
 func (c *RealWorldHTTPClientImpl) UnFavoriteArticle(ctx context.Context, in *UnFavoriteArticleRequest, opts ...http.CallOption) (*SingleArticleReply, error) {
 	var out SingleArticleReply
-	pattern := "api/articles/{slug}/favorite"
+	pattern := "/api/articles/{slug}/favorite"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationRealWorldUnFavoriteArticle))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -748,7 +748,7 @@ func (c *RealWorldHTTPClientImpl) UnFavoriteArticle(ctx context.Context, in *UnF
 
 func (c *RealWorldHTTPClientImpl) UnFollowUser(ctx context.Context, in *UnFollowUserRequest, opts ...http.CallOption) (*ProfileReply, error) {
 	var out ProfileReply
-	pattern := "api/profiles/{username}/follow"
+	pattern := "/api/profiles/{username}/follow"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationRealWorldUnFollowUser))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -761,7 +761,7 @@ func (c *RealWorldHTTPClientImpl) UnFollowUser(ctx context.Context, in *UnFollow
 
 func (c *RealWorldHTTPClientImpl) UpdateArticle(ctx context.Context, in *UpdateArticleRequest, opts ...http.CallOption) (*SingleArticleReply, error) {
 	var out SingleArticleReply
-	pattern := "api/articles/{slug}"
+	pattern := "/api/articles/{slug}"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationRealWorldUpdateArticle))
 	opts = append(opts, http.PathTemplate(pattern))

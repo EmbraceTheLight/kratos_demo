@@ -43,82 +43,82 @@ service RealWorld {
     }
     rpc GetProfile(GetProfileRequest) returns (ProfileReply) {
         option (google.api.http) = {
-            get: "api/profiles/{username}",
+            get: "/api/profiles/{username}",
         };
     }
     rpc FollowUser(FollowUserRequest) returns (ProfileReply) {
         option (google.api.http) = {
-            post: "api/profiles/{username}/follow",
+            post: "/api/profiles/{username}/follow",
             body: "*",
         };
     }
     rpc UnFollowUser(UnFollowUserRequest) returns (ProfileReply) {
         option (google.api.http) = {
-            delete: "api/profiles/{username}/follow",
+            delete: "/api/profiles/{username}/follow",
         };
     }
     rpc ListArticles(ListArticlesRequest) returns (MultipleArticlesReply) {
         option (google.api.http) = {
-            get: "api/articles",
+            get: "/api/articles",
         };
     }
     rpc FeedArticles(FeedArticlesRequest) returns (MultipleArticlesReply) {
         option (google.api.http) = {
-            get: "api/articles/feed",
+            get: "/api/articles/feed",
         };
     }
     rpc GetArticle(GetArticleRequest) returns (SingleArticleReply) {
         option (google.api.http) = {
-            get: "api/articles/{slug}",
+            get: "/api/articles/{slug}",
         };
     }
     rpc CreateArticle(CreateArticleRequest) returns (SingleArticleReply) {
         option (google.api.http) = {
-            post: "api/articles",
+            post: "/api/articles",
             body: "*",
         };
     }
     rpc UpdateArticle(UpdateArticleRequest) returns (SingleArticleReply) {
         option (google.api.http) = {
-            put: "api/articles/{slug}",
+            put: "/api/articles/{slug}",
             body: "*",
         };
     }
     rpc DeleteArticle(DeleteArticleRequest) returns (DeleteArticleReply) {
         option (google.api.http) = {
-            delete: "api/articles/{slug}",
+            delete: "/api/articles/{slug}",
         };
     }
     rpc AddComment(AddCommentRequest) returns (SingleCommentReply) {
         option (google.api.http) = {
-            post: "api/articles/{slug}/comments",
+            post: "/api/articles/{slug}/comments",
             body: "*",
         };
     }
     rpc GetComments(GetCommentsRequest) returns (MultipleCommentsReply) {
         option (google.api.http) = {
-            get: "api/articles/{slug}/comments",
+            get: "/api/articles/{slug}/comments",
         };
     }
     rpc DeleteComments(DeleteCommentsRequest) returns (MultipleCommentsReply) {
         option (google.api.http) = {
-            delete: "api/articles/{slug}/comments/{id}",
+            delete: "/api/articles/{slug}/comments/{id}",
         };
     }
     rpc FavoriteArticle(FavoriteArticleRequest) returns (SingleArticleReply) {
         option (google.api.http) = {
-            post: "api/articles/{slug}/favorite",
+            post: "/api/articles/{slug}/favorite",
             body: "*",
         };
     }
     rpc UnFavoriteArticle(UnFavoriteArticleRequest) returns (SingleArticleReply) {
         option (google.api.http) = {
-            get: "api/articles/{slug}/favorite",
+            get: "/api/articles/{slug}/favorite",
         };
     }
     rpc GetTags(EmptyRequest) returns (TasLIstReply) {
         option (google.api.http) = {
-            get: "api/tags",
+            get: "/api/tags",
         };
     }
 }

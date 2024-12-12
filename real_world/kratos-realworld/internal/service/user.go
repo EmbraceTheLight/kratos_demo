@@ -2,9 +2,9 @@ package service
 
 import (
 	"context"
-	"kratos-realworld/internal/biz"
-
 	v1 "kratos-realworld/api/realworld/v1"
+	"kratos-realworld/internal/biz"
+	"kratos-realworld/internal/encoder"
 )
 
 type RealWorldService struct {
@@ -14,7 +14,7 @@ type RealWorldService struct {
 	sc *biz.SocialUsecase
 }
 
-func NewRealWorldService(uc *biz.UserUsecase, sc *biz.SocialUsecase) *RealWorldService {
+func NewUserService(uc *biz.UserUsecase, sc *biz.SocialUsecase) *RealWorldService {
 	return &RealWorldService{
 		uc: uc,
 		sc: sc,
@@ -22,6 +22,9 @@ func NewRealWorldService(uc *biz.UserUsecase, sc *biz.SocialUsecase) *RealWorldS
 }
 
 func (s *RealWorldService) Login(ctx context.Context, req *v1.LoginRequest) (*v1.UserReply, error) {
+	if len(req.User.Email) == 0 {
+		return nil, encoder.NewHTTPError(422, "email can't be empty")
+	}
 	return &v1.UserReply{}, nil
 }
 func (s *RealWorldService) Register(ctx context.Context, req *v1.RegisterRequest) (*v1.UserReply, error) {

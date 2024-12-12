@@ -2,6 +2,7 @@ package data
 
 import (
 	"kratos-realworld/internal/conf"
+	"kratos-realworld/internal/data/models"
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
@@ -26,11 +27,13 @@ func NewData(c *conf.Data, logger log.Logger, mysqlDB *gorm.DB) (*Data, func(), 
 }
 func NewMySQL(c *conf.Data) *gorm.DB {
 	dsn := c.Database.Source
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
+		DisableForeignKeyConstraintWhenMigrating: true,
+	})
 	if err != nil {
 		panic("failed to connect database:" + err.Error())
 	}
-	if err := db.AutoMigrate(); err != nil {
+	if err := db.AutoMigrate(&models.User{}); err != nil {
 		panic(err)
 	}
 	return db
