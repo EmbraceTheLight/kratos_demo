@@ -1,4 +1,7 @@
 ## kratos学习仓库
+
+[English](./README.md) | 简体中文
+
 ### 仓库简介
 这是一个用于学习go-kratos框架的仓库，其中有官方demo、examples以及我自己编写的一些项目
 ### 仓库内容

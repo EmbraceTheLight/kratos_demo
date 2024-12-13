@@ -1,4 +1,7 @@
 ## Kratos Learning Repository
+
+English | [简体中文](README.zh_CN.md)
+
 ### Repository Overview
 This is a repository for learning the Go-Kratos framework. It includes official demos, examples, and some projects I have developed myself.
 
