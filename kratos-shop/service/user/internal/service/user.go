@@ -31,25 +31,25 @@ func (u *UserService) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 		return nil, err
 	}
 	userInfoResp := &pb.CreateUserReply{
-		Id:       user.ID,
-		Mobile:   user.Mobile,
-		Password: user.Password,
-		NickName: user.NickName,
-		Gender:   user.Gender,
-		Role:     int32(user.Role),
-		Birthday: user.Birthday,
+		UserInfo: &pb.UserInfo{
+			Id:       user.ID,
+			Mobile:   user.Mobile,
+			Password: user.Password,
+			NickName: user.NickName,
+			Gender:   user.Gender,
+			Role:     int32(user.Role),
+			Birthday: user.Birthday,
+		},
 	}
 	return userInfoResp, nil
 }
-func (u *UserService) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest) (*pb.UpdateUserReply, error) {
-	return &pb.UpdateUserReply{}, nil
+func (u *UserService) GetUserList(context.Context, *pb.GetUserListRequest) (*pb.GetUserListReply, error) {
 }
-func (u *UserService) DeleteUser(ctx context.Context, req *pb.DeleteUserRequest) (*pb.DeleteUserReply, error) {
-	return &pb.DeleteUserReply{}, nil
+func (u *UserService) GetUserByMobile(context.Context, *pb.GetUserByMobileRequest) (*pb.GetUserByMobileReply, error) {
 }
-func (u *UserService) GetUser(ctx context.Context, req *pb.GetUserRequest) (*pb.GetUserReply, error) {
-	return &pb.GetUserReply{}, nil
+func (u *UserService) GetUserById(context.Context, *pb.GetUserByIdRequest) (*pb.GetUserByIdReply, error) {
 }
-func (u *UserService) ListUser(ctx context.Context, req *pb.ListUserRequest) (*pb.ListUserReply, error) {
-	return &pb.ListUserReply{}, nil
+func (u *UserService) UpdateUser(context.Context, *pb.UpdateUserRequest) (*pb.UpdateUserReply, error) {
+}
+func (u *UserService) CheckPassword(context.Context, *pb.CheckPasswordRequest) (*pb.CheckPasswordReply, error) {
 }
