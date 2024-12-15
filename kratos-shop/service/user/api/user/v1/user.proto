@@ -20,7 +20,7 @@ message UserInfo {
     string password = 2;
     string mobile   = 3;
     string nickName = 4;
-    int64 birthday  = 5;
+    uint64 birthday = 5;
     string gender   = 6;
     int32 role      = 7;
 }
@@ -42,7 +42,7 @@ message GetUserListRequest {
 message GetUserListReply {
     int32 total = 1;
     //用户列表信息
-    repeated CreateUserReply data = 2;
+    repeated UserInfo data = 2;
 }
 
 message GetUserByMobileRequest {
