@@ -9,6 +9,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"gorm.io/gorm"
+	"strings"
 	"time"
 	"user/internal/biz"
 )
@@ -30,6 +31,80 @@ type User struct {
 type userRepo struct {
 	data *Data
 	log  *log.Helper
+}
+
+func NewUserRepo(data *Data, logger log.Logger) biz.UserRepo {
+	return &userRepo{
+		data: data,
+		log:  log.NewHelper(logger),
+	}
+}
+
+func (ur *userRepo) ListUser(ctx context.Context, pageNum, pageSize int64) (users []*biz.User, total int, err error) {
+	var results []*User
+	offset, limit := (pageNum-1)*pageSize, pageSize
+	result := ur.data.db.
+		Offset(int(offset)).
+		Limit(int(limit)).
+		Find(&results)
+	if result.Error != nil {
+		return nil, 0, result.Error
+	}
+	total = int(result.RowsAffected)
+	for _, user := range results {
+		users = append(users, toBizUser(user))
+	}
+	return users, total, nil
+}
+
+func (ur *userRepo) UserByMobile(ctx context.Context, mobile string) (user *biz.User, err error) {
+	var u User
+	result := ur.data.db.Where(&User{Mobile: mobile}).First(&u)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	if result.RowsAffected == 0 {
+		return nil, status.Errorf(codes.NotFound, "用户不存在")
+	}
+	user = toBizUser(&u)
+	return user, nil
+}
+
+func (ur *userRepo) UserByID(ctx context.Context, id int64) (user *biz.User, err error) {
+	var u User
+	result := ur.data.db.Where(&User{ID: id}).First(&u)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	if result.RowsAffected == 0 {
+		return nil, status.Errorf(codes.NotFound, "用户不存在")
+	}
+	user = toBizUser(&u)
+	return user, nil
+}
+
+func (ur *userRepo) UpdateUser(ctx context.Context, user *biz.User) (isSuccess bool, err error) {
+	var u User
+	result := ur.data.db.Where(&User{ID: user.ID}).First(&u)
+	if result.RowsAffected == 0 {
+		return false, status.Errorf(codes.NotFound, "用户不存在")
+	}
+	u.NickName = user.NickName
+	u.Gender = user.Gender
+	u.Birthday = user.Birthday
+
+	err = ur.data.db.Save(&u).Error
+	if err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
+func (ur *userRepo) CheckPassword(ctx context.Context, psd, encryptedPassword string) (check bool, err error) {
+	options := &password.Options{SaltLen: 16, Iterations: 10000, KeyLen: 32, HashFunction: sha512.New}
+	passwordInfo := strings.Split(encryptedPassword, "$")
+	check = password.Verify(psd, passwordInfo[2], passwordInfo[3], options)
+	return check, nil
 }
 
 func (ur *userRepo) CreateUser(ctx context.Context, u *biz.User) (*biz.User, error) {
@@ -65,9 +140,15 @@ func encrypt(str string) string {
 	salt, encodedStr := password.Encode(str, options)
 	return fmt.Sprintf("$pbkdf2-sha512$%s$%s", salt, encodedStr)
 }
-func NewUserRepo(data *Data, logger log.Logger) biz.UserRepo {
-	return &userRepo{
-		data: data,
-		log:  log.NewHelper(logger),
+
+func toBizUser(user *User) *biz.User {
+	return &biz.User{
+		ID:       user.ID,
+		Mobile:   user.Mobile,
+		Password: user.Password,
+		NickName: user.NickName,
+		Gender:   user.Gender,
+		Role:     user.Role,
+		Birthday: user.Birthday,
 	}
 }

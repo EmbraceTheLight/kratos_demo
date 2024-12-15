@@ -41,7 +41,7 @@ var _ = ginkgo.BeforeSuite(func() {
 	cleaner = f
 	config := &conf.Data{
 		Mysql: &conf.Data_Mysql{
-			Driver: "musql",
+			Driver: "mysql",
 			Source: conn,
 		},
 	}
