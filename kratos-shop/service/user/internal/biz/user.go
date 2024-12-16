@@ -8,16 +8,17 @@ import (
 )
 
 type User struct {
-	ID        int64
-	Mobile    string
-	Password  string
-	NickName  string
-	Birthday  *time.Time
-	Gender    string
-	Role      int
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt gorm.DeletedAt
+	ID          int64
+	Mobile      string
+	Password    string
+	NickName    string
+	Birthday    *time.Time
+	Gender      string
+	Role        int
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+	DeletedAt   gorm.DeletedAt
+	IsDeletedAt bool
 }
 
 // 新增mock数据命令
@@ -52,15 +53,15 @@ func (uc *UserUsecase) List(ctx context.Context, pageNum, pageSize int64) ([]*Us
 	return uc.repo.ListUser(ctx, pageNum, pageSize)
 }
 
-func (uc *UserUsecase) GetByMobile(ctx context.Context, mobile string) (*User, error) {
+func (uc *UserUsecase) UserByMobile(ctx context.Context, mobile string) (*User, error) {
 	return uc.repo.UserByMobile(ctx, mobile)
 }
 
-func (uc *UserUsecase) GetByID(ctx context.Context, id int64) (*User, error) {
+func (uc *UserUsecase) UserByID(ctx context.Context, id int64) (*User, error) {
 	return uc.repo.UserByID(ctx, id)
 }
 
-func (uc *UserUsecase) Update(ctx context.Context, user *User) (bool, error) {
+func (uc *UserUsecase) UpdateUser(ctx context.Context, user *User) (bool, error) {
 	return uc.repo.UpdateUser(ctx, user)
 }
 
