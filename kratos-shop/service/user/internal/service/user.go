@@ -39,19 +39,18 @@ func (u *UserService) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 			NickName: user.NickName,
 			Gender:   user.Gender,
 			Role:     int32(user.Role),
-			Birthday: user.Birthday,
 		},
 	}
 	return userInfoResp, nil
 }
 
 func (u *UserService) GetUserList(ctx context.Context, req *pb.GetUserListRequest) (*pb.GetUserListReply, error) {
-	list, total, err := u.uc.List(ctx, int(req.PageNumber), int(req.PageSize))
+	list, total, err := u.uc.List(ctx, int64(req.PageNumber), int64(req.PageSize))
 	if err != nil {
 		return nil, err
 	}
 	rsp := &pb.GetUserListReply{
-		Total: total,
+		Total: int32(total),
 	}
 	for _, user := range list {
 		userInfoResp := toUserInfo(user)
