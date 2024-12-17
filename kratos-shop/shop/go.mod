@@ -7,7 +7,6 @@ toolchain go1.22.6
 require (
 	github.com/envoyproxy/protoc-gen-validate v1.0.4
 	github.com/go-kratos/kratos/v2 v2.8.0
-	github.com/golang-jwt/jwt/v4 v4.5.1
 	github.com/golang-jwt/jwt/v5 v5.1.0
 	github.com/google/wire v0.6.0
 	github.com/mojocn/base64Captcha v1.3.6

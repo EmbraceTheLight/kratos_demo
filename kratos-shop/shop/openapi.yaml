@@ -74,7 +74,9 @@ components:
             properties:
                 captchaId:
                     type: string
-                picPath:
+                picture:
+                    type: string
+                answer:
                     type: string
         api.shop.v1.LoginReply:
             type: object

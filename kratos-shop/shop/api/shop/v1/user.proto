@@ -75,5 +75,6 @@ message UserDetailReply {
 
 message CaptchaReply {
     string captcha_id = 1;
-    string pic_path   = 2;
+    string picture    = 2;
+    string answer     = 3;
 }

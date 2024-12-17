@@ -2,13 +2,13 @@ package auth
 
 import (
 	"errors"
-	"github.com/golang-jwt/jwt/v4"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 type CustomClaims struct {
 	ID          int64
 	NickName    string
-	AuthorityID string
+	AuthorityID int
 	jwt.RegisteredClaims
 }
 
