@@ -1,0 +1,78 @@
+syntax = "proto3";
+
+package api.user.v1;
+
+option go_package          = "user/api/user/v1;v1";
+option java_multiple_files = true;
+option java_package        = "api.user.v1";
+
+service User {
+    rpc CreateUser(CreateUserRequest) returns (CreateUserReply);
+    rpc GetUserList(GetUserListRequest) returns (GetUserListReply) {};
+    rpc GetUserByMobile(GetUserByMobileRequest) returns (GetUserByMobileReply) {};
+    rpc GetUserById(GetUserByIdRequest) returns (GetUserByIdReply) {};
+    rpc UpdateUser(UpdateUserRequest) returns (UpdateUserReply) {};
+    rpc CheckPassword(CheckPasswordRequest) returns (CheckPasswordReply) {};
+}
+
+message UserInfo {
+    int64 id        = 1;
+    string password = 2;
+    string mobile   = 3;
+    string nickName = 4;
+    uint64 birthday = 5;
+    string gender   = 6;
+    int32 role      = 7;
+}
+
+message CreateUserRequest {
+    string nickName = 1;
+    string password = 2;
+    string mobile   = 3;
+}
+message CreateUserReply {
+    UserInfo user_info = 1;
+}
+
+message GetUserListRequest {
+    //分页参数
+    uint32 page_number = 1;
+    uint32 page_size   = 2;
+}
+message GetUserListReply {
+    int32 total = 1;
+    //用户列表信息
+    repeated UserInfo data = 2;
+}
+
+message GetUserByMobileRequest {
+    string mobile = 1;
+}
+message GetUserByMobileReply {
+    UserInfo user_info = 1;
+}
+
+message GetUserByIdRequest {
+    int64 id = 1;
+}
+message GetUserByIdReply {
+    UserInfo user_info = 1;
+}
+
+message UpdateUserRequest {
+    int64 id        = 1;
+    string nickName = 2;
+    string gender   = 3;
+    uint64 birthday = 4;
+}
+message UpdateUserReply {
+    bool is_ok = 1;
+}
+
+message CheckPasswordRequest {
+    string password           = 1;
+    string encrypted_password = 2;
+}
+message CheckPasswordReply {
+    bool success = 1;
+}

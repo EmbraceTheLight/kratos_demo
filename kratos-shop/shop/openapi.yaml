@@ -1,0 +1,142 @@
+# Generated with protoc-gen-openapi
+# https://github.com/google/gnostic/tree/master/cmd/protoc-gen-openapi
+
+openapi: 3.0.3
+info:
+    title: Shop API
+    version: 0.0.1
+paths:
+    /api/users/captcha:
+        get:
+            tags:
+                - Shop
+            operationId: Shop_Captcha
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.shop.v1.CaptchaReply'
+    /api/users/detail:
+        get:
+            tags:
+                - Shop
+            operationId: Shop_Detail
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.shop.v1.UserDetailReply'
+    /api/users/login:
+        post:
+            tags:
+                - Shop
+            operationId: Shop_Login
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/api.shop.v1.LoginReq'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.shop.v1.LoginReply'
+    /api/users/register:
+        post:
+            tags:
+                - Shop
+            description: 前三个接口与用户服务部分进行交互，最后一个获取图片验证码的接口内部实现
+            operationId: Shop_Register
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/api.shop.v1.RegisterReq'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.shop.v1.RegisterReply'
+components:
+    schemas:
+        api.shop.v1.CaptchaReply:
+            type: object
+            properties:
+                captchaId:
+                    type: string
+                picPath:
+                    type: string
+        api.shop.v1.LoginReply:
+            type: object
+            properties:
+                id:
+                    type: string
+                mobile:
+                    type: string
+                username:
+                    type: string
+                token:
+                    type: string
+                expireAt:
+                    type: string
+        api.shop.v1.LoginReq:
+            type: object
+            properties:
+                mobile:
+                    type: string
+                password:
+                    type: string
+                captcha:
+                    type: string
+                captchaId:
+                    type: string
+        api.shop.v1.RegisterReply:
+            type: object
+            properties:
+                id:
+                    type: string
+                mobile:
+                    type: string
+                username:
+                    type: string
+                token:
+                    type: string
+                expireAt:
+                    type: string
+        api.shop.v1.RegisterReq:
+            type: object
+            properties:
+                mobile:
+                    type: string
+                username:
+                    type: string
+                password:
+                    type: string
+        api.shop.v1.UserDetailReply:
+            type: object
+            properties:
+                id:
+                    type: string
+                mobile:
+                    type: string
+                nickName:
+                    type: string
+                birthday:
+                    type: string
+                gender:
+                    type: string
+                role:
+                    type: integer
+                    format: int32
+tags:
+    - name: Shop
