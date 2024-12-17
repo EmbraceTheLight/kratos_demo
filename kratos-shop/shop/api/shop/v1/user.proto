@@ -1,0 +1,79 @@
+syntax = "proto3";
+
+package api.shop.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "validate/validate.proto";
+
+option go_package          = "shop/api/shop/v1;v1";
+option java_multiple_files = true;
+option java_package        = "api.shop.v1";
+
+service Shop {
+    // 前三个接口与用户服务部分进行交互，最后一个获取图片验证码的接口内部实现
+    rpc Register(RegisterReq) returns (RegisterReply) {
+        option (google.api.http) = {
+            post: "/api/users/register",
+            body: "*",
+        };
+    }
+    rpc Login(LoginReq) returns (LoginReply) {
+        option (google.api.http) = {
+            post: "/api/users/login",
+            body: "*",
+        };
+    }
+    rpc Detail(google.protobuf.Empty) returns (UserDetailReply) {
+        option (google.api.http) = {
+            get: "/api/users/detail",
+        };
+    }
+
+    rpc Captcha(google.protobuf.Empty) returns (CaptchaReply) {
+        option (google.api.http) = {
+            get: "/api/users/captcha",
+        };
+    }
+}
+
+message RegisterReq {
+    string mobile   = 1 [(validate.rules).string.len = 11];
+    string username = 2 [(validate.rules).string = { min_len: 3, max_len: 15 }];
+    string password = 3 [(validate.rules).string = { min_len: 8 }];
+}
+message RegisterReply {
+    int64 id        = 1;
+    string mobile   = 2;
+    string username = 3;
+    string token    = 4;
+    int64 expire_at = 5;
+}
+
+message LoginReq {
+    string mobile     = 1 [(validate.rules).string.len = 11];
+    string password   = 2 [(validate.rules).string = { min_len: 8 }];
+    string captcha    = 3 [(validate.rules).string = { min_len: 5, max_len: 5 }];
+    string captcha_id = 4 [(validate.rules).string = { min_len: 1 }];
+}
+message LoginReply {
+    int64 id        = 1;
+    string mobile   = 2;
+    string username = 3;
+    string token    = 4;
+    int64 expire_at = 5;
+}
+
+message UserDetailReply {
+    int64 id         = 1;
+    string mobile    = 2;
+    string nick_name = 3;
+    int64 birthday   = 4;
+    string gender    = 5;
+    int32 role       = 6;
+}
+
+message CaptchaReply {
+    string captcha_id = 1;
+    string pic_path   = 2;
+}
