@@ -2,6 +2,7 @@ package server
 
 import (
 	"github.com/go-kratos/kratos/v2/middleware/logging"
+	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	v1 "user/api/user/v1"
 	"user/internal/conf"
 	"user/internal/service"
@@ -16,6 +17,7 @@ func NewGRPCServer(c *conf.Server, userService *service.UserService, logger log.
 	var opts = []grpc.ServerOption{
 		grpc.Middleware(
 			recovery.Recovery(),
+			tracing.Server(),
 			logging.Server(logger),
 		),
 	}
