@@ -4,9 +4,11 @@ import (
 	"context"
 	"github.com/go-kratos/kratos/contrib/registry/consul/v2"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
+	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	consulapi "github.com/hashicorp/consul/api"
+	stdgrpc "google.golang.org/grpc"
 	userv1 "shop/api/service/user/v1"
 	"shop/internal/conf"
 	"time"
@@ -21,7 +23,8 @@ var ProviderSet = wire.NewSet(
 	NewUserRepo,
 	NewUserServiceClient,
 	NewRegistrar,
-	NewDiscovery)
+	NewDiscovery,
+)
 
 // Data .
 type Data struct {
@@ -54,8 +57,10 @@ func NewUserServiceClient(
 		grpc.WithDiscovery(rr),
 		grpc.WithMiddleware(
 			recovery.Recovery(),
+			tracing.Client(), //链路追踪
 		),
 		grpc.WithTimeout(2*time.Second),
+		grpc.WithOptions(stdgrpc.WithStatsHandler(&tracing.ClientHandler{})),
 	)
 	if err != nil {
 		panic(err)
