@@ -11,6 +11,7 @@ import (
 	jwt2 "github.com/golang-jwt/jwt/v5"
 	v1 "shop/api/shop/v1"
 	"shop/internal/conf"
+	"shop/internal/service"
 )
 
 // NewHTTPServer new an HTTP server.
