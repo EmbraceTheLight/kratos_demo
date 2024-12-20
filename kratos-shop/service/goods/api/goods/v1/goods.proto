@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package api.goods.v1;
+
+option go_package          = "goods/api/goods/v1;v1";
+option java_multiple_files = true;
+option java_package        = "..api.goods.v1";
+
+service Goods {
+    rpc CreateCategory(CreateCategoryReq) returns (CreateCategoryResp);
+}
+
+message CreateCategoryReq {
+    int32 id              = 1;
+    string name           = 2;
+    int32 parent_category = 3;
+    int32 level           = 4;
+    bool is_tab           = 5;
+    int32 sort            = 6;
+}
+message CreateCategoryResp {
+    int32 id              = 1;
+    string name           = 2;
+    int32 parent_category = 3;
+    int32 level           = 4;
+    bool is_tab           = 5;
+    int32 sort            = 6;
+}
