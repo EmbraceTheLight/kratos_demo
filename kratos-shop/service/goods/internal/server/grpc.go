@@ -3,6 +3,7 @@ package server
 import (
 	"github.com/go-kratos/kratos/v2/middleware/logging"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
+	"github.com/go-kratos/kratos/v2/middleware/validate"
 	v1 "goods/api/goods/v1"
 	"goods/internal/conf"
 	"goods/internal/service"
@@ -18,6 +19,7 @@ func NewGRPCServer(c *conf.Server, goods *service.GoodsService, logger log.Logge
 		grpc.Middleware(
 			recovery.Recovery(),
 			tracing.Server(),
+			validate.Validator(),
 			logging.Server(logger),
 		),
 	}

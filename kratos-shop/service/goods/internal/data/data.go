@@ -3,6 +3,7 @@ package data
 import (
 	"context"
 	"github.com/redis/go-redis/extra/redisotel/v9"
+	"goods/internal/biz"
 
 	"github.com/redis/go-redis/v9"
 	"goods/internal/conf"
@@ -18,13 +19,23 @@ import (
 )
 
 // ProviderSet is data providers.
-var ProviderSet = wire.NewSet(NewData, NewMySQL, NewRedis, NewCategoryRepo)
+var ProviderSet = wire.NewSet(
+	NewData, NewMySQL, NewRedis,
+	NewCategoryRepo,
+	NewGoodsTypeRepo,
+	NewSpecificationRepo,
+	NewGoodsAttrRepo,
+	NewTransaction,
+)
 
 // Data .
 type Data struct {
 	db  *gorm.DB
 	rdb *redis.Client
 }
+
+// 用来承载事务的上下文
+type contextTxKey struct{}
 
 // NewData .
 func NewData(c *conf.Data, db *gorm.DB, rdb *redis.Client, logger log.Logger) (*Data, func(), error) {
@@ -61,6 +72,12 @@ func NewMySQL(c *conf.Data) *gorm.DB {
 	}
 	tables := []interface{}{
 		&Category{},
+		&GoodsType{},
+		&GoodsAttrValue{},
+		&GoodsAttr{},
+		&GoodsAttrGroup{},
+		&SpecificationsAttr{},
+		&SpecificationsAttrValue{},
 	}
 	err = db.AutoMigrate(tables...)
 	if err != nil {
@@ -88,4 +105,26 @@ func NewRedis(c *conf.Data) *redis.Client {
 		panic(err)
 	}
 	return rdb
+}
+
+// NewTransaction .
+func NewTransaction(d *Data) biz.Transaction {
+	return d
+}
+
+// ExecTx 执行事务
+func (d *Data) ExecTx(ctx context.Context, fn func(ctx context.Context) error) error {
+	return d.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		ctx = context.WithValue(ctx, contextTxKey{}, tx)
+		return fn(ctx)
+	})
+}
+
+// DB 判断当前db使用的是不是事务的 db
+func (d *Data) DB(ctx context.Context) *gorm.DB {
+	tx, ok := ctx.Value(contextTxKey{}).(*gorm.DB)
+	if ok {
+		return tx
+	}
+	return d.db
 }
