@@ -10,12 +10,23 @@ import (
 type GoodsService struct {
 	v1.UnimplementedGoodsServer
 	category *biz.CategoryUsecase
+	types    *biz.GoodsTypeUsecase
+	attr     *biz.GoodsAttrUsecase
+	spec     *biz.SpecificationUsecase
 	logger   *log.Helper
 }
 
-func NewCategoryService(categoryBiz *biz.CategoryUsecase, logger log.Logger) *GoodsService {
+func NewGoodsService(
+	category *biz.CategoryUsecase,
+	types *biz.GoodsTypeUsecase,
+	attr *biz.GoodsAttrUsecase,
+	spec *biz.SpecificationUsecase,
+	logger log.Logger) *GoodsService {
 	return &GoodsService{
-		category: categoryBiz,
+		category: category,
+		types:    types,
+		attr:     attr,
+		spec:     spec,
 		logger:   log.NewHelper(log.With(logger, "module", "service/category")),
 	}
 }

@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 package api.goods.v1;
+import "validate/validate.proto";
 
 option go_package          = "goods/api/goods/v1;v1";
 option java_multiple_files = true;
@@ -8,6 +9,16 @@ option java_package        = "..api.goods.v1";
 
 service Goods {
     rpc CreateCategory(CreateCategoryReq) returns (CreateCategoryResp);
+    rpc CreateGoodsType(GoodsTypeReq) returns (GoodsTypeResp);
+
+    //商品规格或属性的信息
+    rpc CreateGoodsSpecification(SpecificationReq) returns (SpecificationResp);
+
+    // 商品参数属性分组名
+    rpc CreateAttrGroup(CreateAttrGroupReq) returns (CreateAttrGroupResp);
+
+    // 商品参数属性名和值
+    rpc CreateAttrValue(CreateAttrValueReq) returns (CreateAttrValueResp);
 }
 
 message CreateCategoryReq {
@@ -25,4 +36,87 @@ message CreateCategoryResp {
     int32 level           = 4;
     bool is_tab           = 5;
     int32 sort            = 6;
+}
+
+message GoodsTypeReq {
+    int64 id          = 1;
+    string name       = 2 [(validate.rules).string.min_len = 1];
+    string type_code  = 3 [(validate.rules).string.min_len = 3];
+    string alias_name = 4;
+    bool is_virtual   = 5;
+    string desc       = 6;
+    int32 sort        = 7;
+}
+message GoodsTypeResp {
+    int64 id = 1;
+}
+
+message SpecificationReq {
+    message SpecificationValue {
+        int64 id      = 1;
+        int64 attr_id = 2;
+        string value  = 3 [(validate.rules).string.min_len = 3];
+        int32 sort    = 4;
+    }
+    int64 id                                         = 1;
+    int64 type_id                                    = 2 [(validate.rules).int64.gt = 0];
+    string name                                      = 3 [(validate.rules).string.min_len = 1];
+    int32 sort                                       = 4;
+    bool status                                      = 5;
+    bool is_sku                                      = 6;
+    bool is_select                                   = 7;
+    repeated SpecificationValue specification_values = 8;
+}
+message SpecificationResp {
+    int64 id = 1;
+}
+
+message CreateAttrGroupReq {
+    int64 id      = 1;
+    int64 type_id = 2 [(validate.rules).int64.gte = 1];
+    string title  = 3 [(validate.rules).string.min_len = 1];
+    string desc   = 4;
+    bool status   = 5;
+    int32 sort    = 6 [(validate.rules).int32.gte = 1];
+}
+message CreateAttrGroupResp {
+    int64 id      = 1;
+    int64 type_id = 2;
+    string title  = 3;
+    string desc   = 4;
+    bool status   = 5;
+    int32 sort    = 6;
+}
+
+message CreateAttrValueReq {
+    message AttrValue {
+        int64 id       = 1;
+        int64 attr_id  = 2;
+        int64 group_id = 3;
+        string value   = 4 [(validate.rules).string.min_len = 3];
+    }
+    int64 id                      = 1;
+    int64 type_id                 = 2 [(validate.rules).int64.gte = 1];
+    int64 group_id                = 3 [(validate.rules).int64.gte = 1];
+    string title                  = 4 [(validate.rules).string = { min_len: 1 }];
+    string desc                   = 5;
+    bool status                   = 6;
+    int32 sort                    = 7 [(validate.rules).int32.gte = 1];
+    repeated AttrValue attr_value = 8;
+}
+message CreateAttrValueResp {
+    message AttrValue {
+        int64 id       = 1;
+        int64 attr_id  = 2;
+        int64 group_id = 3;
+        string value   = 4;
+    }
+    int64 id                      = 1;
+    int64 type_id                 = 2;
+    int64 group_id                = 3;
+    string title                  = 4;
+    string desc                   = 5;
+    bool status                   = 6;
+    int32 sort                    = 7;
+    repeated AttrValue attr_value = 8;
 }

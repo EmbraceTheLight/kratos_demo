@@ -19,7 +19,11 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Goods_CreateCategory_FullMethodName = "/api.goods.v1.Goods/CreateCategory"
+	Goods_CreateCategory_FullMethodName           = "/api.goods.v1.Goods/CreateCategory"
+	Goods_CreateGoodsType_FullMethodName          = "/api.goods.v1.Goods/CreateGoodsType"
+	Goods_CreateGoodsSpecification_FullMethodName = "/api.goods.v1.Goods/CreateGoodsSpecification"
+	Goods_CreateAttrGroup_FullMethodName          = "/api.goods.v1.Goods/CreateAttrGroup"
+	Goods_CreateAttrValue_FullMethodName          = "/api.goods.v1.Goods/CreateAttrValue"
 )
 
 // GoodsClient is the client API for Goods service.
@@ -27,6 +31,13 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type GoodsClient interface {
 	CreateCategory(ctx context.Context, in *CreateCategoryReq, opts ...grpc.CallOption) (*CreateCategoryResp, error)
+	CreateGoodsType(ctx context.Context, in *GoodsTypeReq, opts ...grpc.CallOption) (*GoodsTypeResp, error)
+	// 商品规格或属性的信息
+	CreateGoodsSpecification(ctx context.Context, in *SpecificationReq, opts ...grpc.CallOption) (*SpecificationResp, error)
+	// 商品参数属性分组名
+	CreateAttrGroup(ctx context.Context, in *CreateAttrGroupReq, opts ...grpc.CallOption) (*CreateAttrGroupResp, error)
+	// 商品参数属性名和值
+	CreateAttrValue(ctx context.Context, in *CreateAttrValueReq, opts ...grpc.CallOption) (*CreateAttrValueResp, error)
 }
 
 type goodsClient struct {
@@ -47,11 +58,58 @@ func (c *goodsClient) CreateCategory(ctx context.Context, in *CreateCategoryReq,
 	return out, nil
 }
 
+func (c *goodsClient) CreateGoodsType(ctx context.Context, in *GoodsTypeReq, opts ...grpc.CallOption) (*GoodsTypeResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GoodsTypeResp)
+	err := c.cc.Invoke(ctx, Goods_CreateGoodsType_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *goodsClient) CreateGoodsSpecification(ctx context.Context, in *SpecificationReq, opts ...grpc.CallOption) (*SpecificationResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SpecificationResp)
+	err := c.cc.Invoke(ctx, Goods_CreateGoodsSpecification_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *goodsClient) CreateAttrGroup(ctx context.Context, in *CreateAttrGroupReq, opts ...grpc.CallOption) (*CreateAttrGroupResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateAttrGroupResp)
+	err := c.cc.Invoke(ctx, Goods_CreateAttrGroup_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *goodsClient) CreateAttrValue(ctx context.Context, in *CreateAttrValueReq, opts ...grpc.CallOption) (*CreateAttrValueResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateAttrValueResp)
+	err := c.cc.Invoke(ctx, Goods_CreateAttrValue_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // GoodsServer is the server API for Goods service.
 // All implementations must embed UnimplementedGoodsServer
 // for forward compatibility.
 type GoodsServer interface {
 	CreateCategory(context.Context, *CreateCategoryReq) (*CreateCategoryResp, error)
+	CreateGoodsType(context.Context, *GoodsTypeReq) (*GoodsTypeResp, error)
+	// 商品规格或属性的信息
+	CreateGoodsSpecification(context.Context, *SpecificationReq) (*SpecificationResp, error)
+	// 商品参数属性分组名
+	CreateAttrGroup(context.Context, *CreateAttrGroupReq) (*CreateAttrGroupResp, error)
+	// 商品参数属性名和值
+	CreateAttrValue(context.Context, *CreateAttrValueReq) (*CreateAttrValueResp, error)
 	mustEmbedUnimplementedGoodsServer()
 }
 
@@ -64,6 +122,18 @@ type UnimplementedGoodsServer struct{}
 
 func (UnimplementedGoodsServer) CreateCategory(context.Context, *CreateCategoryReq) (*CreateCategoryResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateCategory not implemented")
+}
+func (UnimplementedGoodsServer) CreateGoodsType(context.Context, *GoodsTypeReq) (*GoodsTypeResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateGoodsType not implemented")
+}
+func (UnimplementedGoodsServer) CreateGoodsSpecification(context.Context, *SpecificationReq) (*SpecificationResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateGoodsSpecification not implemented")
+}
+func (UnimplementedGoodsServer) CreateAttrGroup(context.Context, *CreateAttrGroupReq) (*CreateAttrGroupResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateAttrGroup not implemented")
+}
+func (UnimplementedGoodsServer) CreateAttrValue(context.Context, *CreateAttrValueReq) (*CreateAttrValueResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateAttrValue not implemented")
 }
 func (UnimplementedGoodsServer) mustEmbedUnimplementedGoodsServer() {}
 func (UnimplementedGoodsServer) testEmbeddedByValue()               {}
@@ -104,6 +174,78 @@ func _Goods_CreateCategory_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Goods_CreateGoodsType_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GoodsTypeReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GoodsServer).CreateGoodsType(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Goods_CreateGoodsType_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GoodsServer).CreateGoodsType(ctx, req.(*GoodsTypeReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Goods_CreateGoodsSpecification_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SpecificationReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GoodsServer).CreateGoodsSpecification(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Goods_CreateGoodsSpecification_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GoodsServer).CreateGoodsSpecification(ctx, req.(*SpecificationReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Goods_CreateAttrGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateAttrGroupReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GoodsServer).CreateAttrGroup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Goods_CreateAttrGroup_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GoodsServer).CreateAttrGroup(ctx, req.(*CreateAttrGroupReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Goods_CreateAttrValue_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateAttrValueReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GoodsServer).CreateAttrValue(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Goods_CreateAttrValue_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GoodsServer).CreateAttrValue(ctx, req.(*CreateAttrValueReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Goods_ServiceDesc is the grpc.ServiceDesc for Goods service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -114,6 +256,22 @@ var Goods_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateCategory",
 			Handler:    _Goods_CreateCategory_Handler,
+		},
+		{
+			MethodName: "CreateGoodsType",
+			Handler:    _Goods_CreateGoodsType_Handler,
+		},
+		{
+			MethodName: "CreateGoodsSpecification",
+			Handler:    _Goods_CreateGoodsSpecification_Handler,
+		},
+		{
+			MethodName: "CreateAttrGroup",
+			Handler:    _Goods_CreateAttrGroup_Handler,
+		},
+		{
+			MethodName: "CreateAttrValue",
+			Handler:    _Goods_CreateAttrValue_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
