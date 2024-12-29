@@ -28,7 +28,7 @@ type categoryRepo struct {
 	log  *log.Helper
 }
 
-func (cr *categoryRepo) AddCategory(ctx context.Context, req *biz.CategoryInfo) (*biz.CategoryInfo, error) {
+func (r *categoryRepo) AddCategory(ctx context.Context, req *biz.CategoryInfo) (*biz.CategoryInfo, error) {
 	//cMap := map[string]interface{}{}
 	//cMap["name"] = req.Name
 	//cMap["level"] = req.Level
@@ -45,13 +45,13 @@ func (cr *categoryRepo) AddCategory(ctx context.Context, req *biz.CategoryInfo) 
 	//查询父级目录是否存在
 	if req.Level != 1 {
 		var categories Category
-		if res := cr.data.db.Debug().First(&categories, req.ParentCategory); res.RowsAffected == 0 {
+		if res := r.data.db.Debug().First(&categories, req.ParentCategory); res.RowsAffected == 0 {
 			return nil, errors.New("商品不存在")
 		}
 		newCategory.ParentCategoryID = req.ParentCategory
 	}
 
-	result := cr.data.db.Model(&Category{}).Create(&newCategory)
+	result := r.data.db.Model(&Category{}).Create(&newCategory)
 	if result.Error != nil {
 		return nil, result.Error
 	}
@@ -77,6 +77,22 @@ func (cr *categoryRepo) AddCategory(ctx context.Context, req *biz.CategoryInfo) 
 		Sort:           newCategory.Sort,
 	}
 	return res, nil
+}
+
+func (r *categoryRepo) GetCategoryByID(ctx context.Context, id int32) (*biz.CategoryInfo, error) {
+	var categories Category
+	if res := r.data.db.First(&categories, id); res.Error != nil {
+		return nil, res.Error
+	}
+	info := &biz.CategoryInfo{
+		ID:             categories.ID,
+		Name:           categories.Name,
+		ParentCategory: categories.ParentCategoryID,
+		Level:          categories.Level,
+		IsTab:          categories.IsTab,
+		Sort:           categories.Sort,
+	}
+	return info, nil
 }
 
 func NewCategoryRepo(data *Data, logger log.Logger) biz.CategoryRepo {

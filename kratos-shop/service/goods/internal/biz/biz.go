@@ -11,6 +11,10 @@ var ProviderSet = wire.NewSet(
 	NewSpecificationUsecase,
 	NewGoodsAttrUsecase,
 	NewGoodsTypeUsecase,
+	NewInventoryUsecase,
+	NewGoodsUsecase,
+	NewGoodsSkuUsecase,
+	NewBrandUsecase,
 )
 
 // Transaction 新增事务接口方法

@@ -12,6 +12,7 @@ type GoodsAttrRepo interface {
 	IsExistsGroupByID(context.Context, int64) (*domain.AttrGroup, error)
 	CreateGoodsAttr(context.Context, *domain.GoodsAttr) (*domain.GoodsAttr, error)
 	CreateGoodsAttrValue(context.Context, []*domain.GoodsAttrValue) ([]*domain.GoodsAttrValue, error)
+	ListByIds(ctx context.Context, id ...int64) (domain.GoodsAttrList, error)
 }
 
 type GoodsAttrUsecase struct {
