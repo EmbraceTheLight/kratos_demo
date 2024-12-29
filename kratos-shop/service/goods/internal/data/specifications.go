@@ -23,6 +23,18 @@ type SpecificationsAttr struct {
 	DeletedAt gorm.DeletedAt `json:"deleted_at"`
 }
 
+func (sa *SpecificationsAttr) ToDomain() *domain.Specification {
+	return &domain.Specification{
+		ID:       sa.ID,
+		TypeID:   sa.TypeID,
+		Name:     sa.Name,
+		Sort:     sa.Sort,
+		Status:   sa.Status,
+		IsSKU:    sa.IsSKU,
+		IsSelect: sa.IsSelect,
+	}
+}
+
 type SpecificationsAttrValue struct {
 	ID        int64          `gorm:"primarykey;type:int" json:"id"`
 	AttrID    int64          `gorm:"index:attr_id;type:int;comment:规格ID;not null"`
@@ -46,7 +58,7 @@ func NewSpecificationRepo(data *Data, logger log.Logger) biz.SpecificationRepo {
 
 }
 
-func (s *specificationRepo) CreateSpecification(ctx context.Context, req *domain.Specification) (int64, error) {
+func (r *specificationRepo) CreateSpecification(ctx context.Context, req *domain.Specification) (int64, error) {
 	specificationAttr := &SpecificationsAttr{
 		TypeID:   req.TypeID,
 		Name:     req.Name,
@@ -55,11 +67,11 @@ func (s *specificationRepo) CreateSpecification(ctx context.Context, req *domain
 		IsSKU:    req.IsSKU,
 		IsSelect: req.IsSelect,
 	}
-	result := s.data.DB(ctx).Save(specificationAttr)
+	result := r.data.DB(ctx).Save(specificationAttr)
 	return specificationAttr.ID, result.Error
 }
 
-func (s *specificationRepo) CreateSpecificationValue(ctx context.Context, attrId int64, req []*domain.SpecificationValue) error {
+func (r *specificationRepo) CreateSpecificationValue(ctx context.Context, attrId int64, req []*domain.SpecificationValue) error {
 	var values []*SpecificationsAttrValue
 
 	// 遍历规格值
@@ -73,6 +85,20 @@ func (s *specificationRepo) CreateSpecificationValue(ctx context.Context, attrId
 	}
 
 	// 批量创建规格值
-	result := s.data.DB(ctx).Create(&values)
+	result := r.data.DB(ctx).Create(&values)
 	return result.Error
+}
+
+// ListByIds 根据id列表查询并返回规格信息
+func (r *specificationRepo) ListByIds(ctx context.Context, id ...int64) (domain.SpecificationList, error) {
+	var l []*SpecificationsAttr
+	if err := r.data.DB(ctx).Where("id IN (?)", id).Find(&l).Error; err != nil {
+		return nil, err
+	}
+
+	var res domain.SpecificationList
+	for _, item := range l {
+		res = append(res, item.ToDomain())
+	}
+	return res, nil
 }

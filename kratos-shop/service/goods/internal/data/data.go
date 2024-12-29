@@ -25,7 +25,11 @@ var ProviderSet = wire.NewSet(
 	NewGoodsTypeRepo,
 	NewSpecificationRepo,
 	NewGoodsAttrRepo,
+	NewBrandRepo,
+	NewGoodsRepo,
+	NewGoodsSkuRepo,
 	NewTransaction,
+	NewInventoryRepo,
 )
 
 // Data .
@@ -78,6 +82,11 @@ func NewMySQL(c *conf.Data) *gorm.DB {
 		&GoodsAttrGroup{},
 		&SpecificationsAttr{},
 		&SpecificationsAttrValue{},
+		&GoodsSku{},
+		&Goods{},
+		&Brand{},
+		&GoodsInventory{},
+		GoodsSpecificationSku{},
 	}
 	err = db.AutoMigrate(tables...)
 	if err != nil {

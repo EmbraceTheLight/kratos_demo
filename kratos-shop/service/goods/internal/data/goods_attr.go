@@ -3,6 +3,7 @@ package data
 import (
 	"context"
 	"errors"
+	kerr "github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
 	"goods/internal/biz"
 	"goods/internal/domain"
@@ -58,6 +59,20 @@ func NewGoodsAttrRepo(data *Data, logger log.Logger) biz.GoodsAttrRepo {
 		data: data,
 		log:  log.NewHelper(logger),
 	}
+}
+
+// ListByIds 查找并返回商品属性分组
+func (g *goodsAttrRepo) ListByIds(ctx context.Context, ids ...int64) (domain.GoodsAttrList, error) {
+	var l []*GoodsAttr
+	if err := g.data.DB(ctx).Where("id IN (?)", ids).Find(&l).Error; err != nil {
+		return nil, kerr.NotFound("ATTR_NOT_FOUND", "商品属性不存在")
+	}
+
+	var res domain.GoodsAttrList
+	for _, item := range l {
+		res = append(res, item.ToDomain())
+	}
+	return res, nil
 }
 
 func (g *goodsAttrRepo) CreateGoodsGroupAttr(ctx context.Context, group *domain.AttrGroup) (*domain.AttrGroup, error) {

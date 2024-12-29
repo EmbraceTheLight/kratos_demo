@@ -53,14 +53,17 @@ func (g *goodsTypeRepo) IsExistsByID(ctx context.Context, typeID int64) (*domain
 	if res := g.data.db.First(&goodsType, typeID); res.RowsAffected == 0 {
 		return nil, errors.New("商品类型不存在")
 	}
-	res := &domain.GoodsType{
-		ID:        goodsType.ID,
-		Name:      goodsType.Name,
-		TypeCode:  goodsType.TypeCode,
-		AliasName: goodsType.AliasName,
-		IsVirtual: goodsType.IsVirtual,
-		Desc:      goodsType.Desc,
-		Sort:      goodsType.Sort,
+	return goodsType.ToDomain(), nil
+}
+
+func (g *GoodsType) ToDomain() *domain.GoodsType {
+	return &domain.GoodsType{
+		ID:        g.ID,
+		Name:      g.Name,
+		TypeCode:  g.TypeCode,
+		AliasName: g.AliasName,
+		IsVirtual: g.IsVirtual,
+		Desc:      g.Desc,
+		Sort:      g.Sort,
 	}
-	return res, nil
 }

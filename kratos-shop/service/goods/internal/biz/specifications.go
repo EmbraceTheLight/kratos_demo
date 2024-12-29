@@ -10,6 +10,7 @@ import (
 type SpecificationRepo interface {
 	CreateSpecification(context.Context, *domain.Specification) (int64, error)
 	CreateSpecificationValue(context.Context, int64, []*domain.SpecificationValue) error
+	ListByIds(ctx context.Context, id ...int64) (domain.SpecificationList, error)
 }
 
 type SpecificationUsecase struct {

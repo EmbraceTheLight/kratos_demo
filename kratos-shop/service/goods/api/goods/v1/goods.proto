@@ -19,6 +19,9 @@ service Goods {
 
     // 商品参数属性名和值
     rpc CreateAttrValue(CreateAttrValueReq) returns (CreateAttrValueResp);
+
+    // 创建商品
+    rpc CreateGoods(CreateGoodsReq) returns (CreateGoodsResp);
 }
 
 message CreateCategoryReq {
@@ -119,4 +122,64 @@ message CreateAttrValueResp {
     bool status                   = 6;
     int32 sort                    = 7;
     repeated AttrValue attr_value = 8;
+}
+
+message CreateGoodsReq {
+    int64 id                     = 1;
+    int32 category_id            = 2 [(validate.rules).int32.gte = 1];
+    int32 brand_id               = 3 [(validate.rules).int32.gte = 1];
+    int64 type_id                = 4 [(validate.rules).int64.gte = 1];
+    string name                  = 5 [(validate.rules).string.min_len = 1];
+    string alias_name            = 6;
+    string goods_tags            = 7;
+    string goods_sn              = 8 [(validate.rules).string.min_len = 1];
+    int64 shop_price             = 9;
+    int64 market_price           = 10;
+    int64 inventory              = 11;
+    string goods_brief           = 12;
+    string goods_frontImage      = 13;
+    repeated string goods_images = 14;
+    bool ship_free               = 15;
+    int32 ship_id                = 16;
+    bool is_new                  = 17;
+    bool is_hot                  = 18;
+    bool on_sale                 = 19;
+
+    // 根据商品类型 选择商品规格和商品属性信息
+    message GoodsSku {
+        int64 id              = 1;
+        int64 goods_id        = 2;
+        string sku_name       = 3 [(validate.rules).string.min_len = 1];
+        string code           = 4 [(validate.rules).string.min_len = 1];
+        string bar_code       = 5 [(validate.rules).string.min_len = 1];
+        int64 price           = 6;
+        int64 promotion_price = 7;
+        int64 points          = 8;
+        string image          = 9;
+        int32 sort            = 10;
+        int64 inventory       = 11;
+        // 商品规格
+        message Specification {
+            int64 s_id = 1 [(validate.rules).int64.gte = 1];
+            int64 v_id = 2 [(validate.rules).int64.gte = 1];
+        }
+        // 商品属性组
+        message GroupAttr {
+            int64 group_id    = 1 [(validate.rules).int64.gte = 1];
+            string group_name = 2 [(validate.rules).string.min_len = 1];
+            message attr {
+                int64 attr_id          = 1 [(validate.rules).int64.gte = 1];
+                string attr_name       = 2 [(validate.rules).string.min_len = 1];
+                int64 attr_value_id    = 3 [(validate.rules).int64.gte = 1];
+                string attr_value_name = 4 [(validate.rules).string.min_len = 1];
+            }
+            repeated attr attr_info = 3;
+        }
+        repeated Specification specification_info = 12;
+        repeated GroupAttr group_attr_info        = 13;
+    }
+    repeated GoodsSku sku = 20;
+}
+message CreateGoodsResp {
+    int64 id = 1;
 }

@@ -38,3 +38,15 @@ type GoodsAttrValue struct {
 func (p *GoodsAttrValue) IsValueEmpty() bool {
 	return p.Value == ""
 }
+
+type GoodsAttrList []*GoodsAttr
+
+// IsNotExist 判断某商品属性在属性列表中是否不存在
+func (p GoodsAttrList) IsNotExist(groupId, attrId int64) bool {
+	for _, item := range p {
+		if item.GroupID != groupId && item.ID != attrId {
+			return true
+		}
+	}
+	return false
+}
