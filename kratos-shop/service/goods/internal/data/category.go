@@ -2,7 +2,9 @@ package data
 
 import (
 	"context"
-	"errors"
+	stderr "errors"
+	"fmt"
+	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
 	"goods/internal/biz"
 	"gorm.io/gorm"
@@ -28,6 +30,13 @@ type categoryRepo struct {
 	log  *log.Helper
 }
 
+func NewCategoryRepo(data *Data, logger log.Logger) biz.CategoryRepo {
+	return &categoryRepo{
+		data: data,
+		log:  log.NewHelper(logger),
+	}
+}
+
 func (r *categoryRepo) AddCategory(ctx context.Context, req *biz.CategoryInfo) (*biz.CategoryInfo, error) {
 	//cMap := map[string]interface{}{}
 	//cMap["name"] = req.Name
@@ -46,7 +55,7 @@ func (r *categoryRepo) AddCategory(ctx context.Context, req *biz.CategoryInfo) (
 	if req.Level != 1 {
 		var categories Category
 		if res := r.data.db.Debug().First(&categories, req.ParentCategory); res.RowsAffected == 0 {
-			return nil, errors.New("商品不存在")
+			return nil, stderr.New("商品不存在")
 		}
 		newCategory.ParentCategoryID = req.ParentCategory
 	}
@@ -95,9 +104,28 @@ func (r *categoryRepo) GetCategoryByID(ctx context.Context, id int32) (*biz.Cate
 	return info, nil
 }
 
-func NewCategoryRepo(data *Data, logger log.Logger) biz.CategoryRepo {
-	return &categoryRepo{
-		data: data,
-		log:  log.NewHelper(logger),
+func (r *categoryRepo) GetCategoryAll(ctx context.Context, level, id int32) ([]interface{}, error) {
+	categoryIds := make([]interface{}, 0)
+	var subQuery string
+	// 把一级级分类下的所有三级分类都拿到
+	if level == 1 {
+		subQuery = fmt.Sprintf("SELECT id FROM categories WHERE parent_category_id IN (SELECT id FROM categories WHERE parent_category_id=%d)", id)
+	} else if level == 2 {
+		subQuery = fmt.Sprintf("SELECT id FROM categories WHERE parent_category_id=%d", id)
+	} else if level == 3 {
+		subQuery = fmt.Sprintf("SELECT id FROM categories WHERE id=%d", id)
 	}
+
+	type Result struct {
+		ID int32
+	}
+
+	var results []Result
+	if err := r.data.db.Table("categories").Model(Category{}).Raw(subQuery).Scan(&results).Error; err != nil {
+		return nil, errors.InternalServer("CATEGORY_ERROR", err.Error())
+	}
+	for _, re := range results {
+		categoryIds = append(categoryIds, re.ID)
+	}
+	return categoryIds, nil
 }

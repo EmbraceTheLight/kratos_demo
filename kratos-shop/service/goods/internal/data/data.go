@@ -2,10 +2,12 @@ package data
 
 import (
 	"context"
+	es "github.com/elastic/go-elasticsearch/v8"
+	"github.com/go-kratos/kratos/v2/log"
+	"github.com/google/wire"
 	"github.com/redis/go-redis/extra/redisotel/v9"
-	"goods/internal/biz"
-
 	"github.com/redis/go-redis/v9"
+	"goods/internal/biz"
 	"goods/internal/conf"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -13,14 +15,11 @@ import (
 	slog "log"
 	"os"
 	"time"
-
-	"github.com/go-kratos/kratos/v2/log"
-	"github.com/google/wire"
 )
 
 // ProviderSet is data providers.
 var ProviderSet = wire.NewSet(
-	NewData, NewMySQL, NewRedis,
+	NewData, NewMySQL, NewRedis, NewElasticSearch,
 	NewCategoryRepo,
 	NewGoodsTypeRepo,
 	NewSpecificationRepo,
@@ -30,25 +29,28 @@ var ProviderSet = wire.NewSet(
 	NewGoodsSkuRepo,
 	NewTransaction,
 	NewInventoryRepo,
+	NewEsGoodsRepo,
 )
 
 // Data .
 type Data struct {
-	db  *gorm.DB
-	rdb *redis.Client
+	db       *gorm.DB
+	rdb      *redis.Client
+	esClient *es.TypedClient
 }
 
 // 用来承载事务的上下文
 type contextTxKey struct{}
 
 // NewData .
-func NewData(c *conf.Data, db *gorm.DB, rdb *redis.Client, logger log.Logger) (*Data, func(), error) {
+func NewData(c *conf.Data, db *gorm.DB, rdb *redis.Client, esClient *es.TypedClient, logger log.Logger) (*Data, func(), error) {
 	cleanup := func() {
 		log.NewHelper(logger).Info("closing the data resources")
 	}
 	return &Data{
-		db:  db,
-		rdb: rdb,
+		db:       db,
+		rdb:      rdb,
+		esClient: esClient,
 	}, cleanup, nil
 }
 
@@ -86,7 +88,7 @@ func NewMySQL(c *conf.Data) *gorm.DB {
 		&Goods{},
 		&Brand{},
 		&GoodsInventory{},
-		GoodsSpecificationSku{},
+		&GoodsSpecificationSku{},
 	}
 	err = db.AutoMigrate(tables...)
 	if err != nil {
@@ -114,6 +116,21 @@ func NewRedis(c *conf.Data) *redis.Client {
 		panic(err)
 	}
 	return rdb
+}
+
+func NewElasticSearch(c *conf.Data) *es.TypedClient {
+	esClient, err := es.NewTypedClient(es.Config{
+		Addresses:         []string{c.ElasticSearch.Addr},
+		Username:          c.ElasticSearch.Username,
+		Password:          c.ElasticSearch.Password,
+		CACert:            c.ElasticSearch.CaCert,
+		EnableDebugLogger: true,
+	})
+	if err != nil {
+		panic(err)
+	}
+
+	return esClient
 }
 
 // NewTransaction .
