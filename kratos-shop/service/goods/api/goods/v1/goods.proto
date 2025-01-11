@@ -22,6 +22,9 @@ service Goods {
 
     // 创建商品
     rpc CreateGoods(CreateGoodsReq) returns (CreateGoodsResp);
+
+    // 通过elastic search查询商品
+    rpc GoodsList(GoodsListReq) returns (GoodsListResp);
 }
 
 message CreateCategoryReq {
@@ -182,4 +185,47 @@ message CreateGoodsReq {
 }
 message CreateGoodsResp {
     int64 id = 1;
+}
+
+// 根据data/es_goods.go中设计的mapping结构构建查询所需字段
+message GoodsListReq {
+    string keywords     = 1;
+    int32 category_id   = 2;
+    int32 brand_id      = 3;
+    int64 min_price     = 4;
+    int64 max_price     = 5;
+    bool is_hot         = 6;
+    bool is_new         = 7;
+    bool is_tab         = 8;
+    int64 click_num     = 9;
+    int64 sold_num      = 10;
+    int64 fav_num       = 11;
+    int64 pages         = 12;
+    int64 page_per_nums = 13;
+    int64 id            = 14;
+}
+
+// 返回的每个商品的具体信息，
+message GoodsListResp {
+    message GoodsInfo {
+        int64 id                     = 1;
+        int32 category_id            = 2;
+        int32 brand_id               = 3;
+        string name                  = 4;
+        string goods_sn              = 5;
+        int64 click_num              = 6;
+        int64 sold_num               = 7;
+        int64 fav_num                = 8;
+        int64 market_price           = 9;
+        string goods_brief           = 10;
+        string goods_desc            = 11;
+        bool ship_free               = 12;
+        string images                = 13;
+        repeated string goods_images = 14;
+        bool is_new                  = 15;
+        bool is_hot                  = 16;
+        bool on_sale                 = 17;
+    }
+    int64 total_count             = 1;
+    repeated GoodsInfo goods_info = 2;
 }

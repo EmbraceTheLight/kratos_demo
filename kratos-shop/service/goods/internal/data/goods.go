@@ -2,6 +2,7 @@ package data
 
 import (
 	"context"
+	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
 	"goods/internal/biz"
 	"goods/internal/domain"
@@ -41,6 +42,13 @@ type goodsRepo struct {
 	log  *log.Helper
 }
 
+// NewGoodsRepo .
+func NewGoodsRepo(data *Data, logger log.Logger) biz.GoodsRepo {
+	return &goodsRepo{
+		data: data,
+		log:  log.NewHelper(logger),
+	}
+}
 func (g *goodsRepo) CreateGoods(ctx context.Context, goods *domain.Goods) (*domain.Goods, error) {
 	product := &Goods{
 		CategoryID:      goods.CategoryID,
@@ -67,12 +75,17 @@ func (g *goodsRepo) CreateGoods(ctx context.Context, goods *domain.Goods) (*doma
 	return product.ToDomain(), nil
 }
 
-// NewGoodsRepo .
-func NewGoodsRepo(data *Data, logger log.Logger) biz.GoodsRepo {
-	return &goodsRepo{
-		data: data,
-		log:  log.NewHelper(logger),
+// GoodsListByIDs 根据商品ID列表查询商品列表
+func (g *goodsRepo) GoodsListByIDs(ctx context.Context, ids ...int64) ([]*domain.Goods, error) {
+	var l []*Goods
+	if err := g.data.DB(ctx).Where("id IN (?)", ids).Find(&l).Error; err != nil {
+		return nil, errors.NotFound("GOODS_NOT_FOUND", "商品不存在")
 	}
+	var res []*domain.Goods
+	for _, item := range l {
+		res = append(res, item.ToDomain())
+	}
+	return res, nil
 }
 
 func (g *Goods) ToDomain() *domain.Goods {

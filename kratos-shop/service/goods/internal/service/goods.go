@@ -6,6 +6,7 @@ import (
 	"goods/internal/domain"
 )
 
+// CreateGoods 创建商品
 func (gs *GoodsService) CreateGoods(ctx context.Context, r *pb.CreateGoodsReq) (*pb.CreateGoodsResp, error) {
 	var goodsSku []*domain.GoodsSku
 
@@ -78,4 +79,54 @@ func (gs *GoodsService) CreateGoods(ctx context.Context, r *pb.CreateGoodsReq) (
 		return nil, err
 	}
 	return &pb.CreateGoodsResp{Id: result.GoodsID}, nil
+}
+
+// GoodsList 通过elastic search查询商品
+func (gs *GoodsService) GoodsList(ctx context.Context, r *pb.GoodsListReq) (*pb.GoodsListResp, error) {
+	goodsFilter := &domain.ESGoodsFilter{
+		ID:          r.Id,
+		CategoryID:  r.CategoryId,
+		BrandsID:    r.BrandId,
+		Keywords:    r.Keywords,
+		IsNew:       r.IsNew,
+		IsHot:       r.IsHot,
+		ClickNum:    r.ClickNum,
+		SoldNum:     r.SoldNum,
+		FavNum:      r.FavNum,
+		MaxPrice:    r.MaxPrice,
+		MinPrice:    r.MinPrice,
+		Pages:       r.Pages,
+		PagePerNums: r.PagePerNums,
+	}
+
+	result, err := gs.esGoods.GoodsList(ctx, goodsFilter)
+	if err != nil {
+		return nil, err
+	}
+	response := &pb.GoodsListResp{
+		TotalCount: result.Total,
+	}
+	for _, goods := range result.List {
+		res := &pb.GoodsListResp_GoodsInfo{
+			Id:          goods.ID,
+			CategoryId:  goods.CategoryID,
+			BrandId:     goods.BrandsID,
+			Name:        goods.Name,
+			GoodsSn:     goods.GoodsSn,
+			ClickNum:    goods.ClickNum,
+			SoldNum:     goods.SoldNum,
+			FavNum:      goods.FavNum,
+			MarketPrice: goods.MarketPrice,
+			GoodsBrief:  goods.GoodsBrief,
+			GoodsDesc:   goods.GoodsBrief,
+			ShipFree:    goods.ShipFree,
+			Images:      goods.GoodsFrontImage,
+			GoodsImages: goods.GoodsImages,
+			IsNew:       goods.IsNew,
+			IsHot:       goods.IsHot,
+			OnSale:      goods.OnSale,
+		}
+		response.GoodsInfo = append(response.GoodsInfo, res)
+	}
+	return response, nil
 }

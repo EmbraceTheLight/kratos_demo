@@ -10,6 +10,7 @@ import (
 
 type GoodsRepo interface {
 	CreateGoods(ctx context.Context, goods *domain.Goods) (*domain.Goods, error)
+	GoodsListByIDs(context.Context, ...int64) ([]*domain.Goods, error)
 }
 
 type GoodsUsecase struct {
@@ -21,6 +22,7 @@ type GoodsUsecase struct {
 	typeRepo          GoodsTypeRepo
 	specificationRepo SpecificationRepo
 	goodsAttrRepo     GoodsAttrRepo
+	esGoodsRepo       EsGoodsRepo
 	inventoryRepo     InventoryRepo
 	log               *log.Helper
 }
@@ -34,6 +36,7 @@ func NewGoodsUsecase(
 	typeRepo GoodsTypeRepo,
 	specificationRepo SpecificationRepo,
 	goodsAttrRepo GoodsAttrRepo,
+	esGoodsRepo EsGoodsRepo,
 	inventoryRepo InventoryRepo,
 	logger log.Logger) *GoodsUsecase {
 	return &GoodsUsecase{
@@ -45,6 +48,7 @@ func NewGoodsUsecase(
 		typeRepo:          typeRepo,
 		specificationRepo: specificationRepo,
 		goodsAttrRepo:     goodsAttrRepo,
+		esGoodsRepo:       esGoodsRepo,
 		inventoryRepo:     inventoryRepo,
 		log:               log.NewHelper(logger),
 	}
@@ -53,27 +57,36 @@ func NewGoodsUsecase(
 
 func (u *GoodsUsecase) CreateGoods(ctx context.Context, r *domain.Goods) (*domain.GoodsInfoResponse, error) {
 	var (
-		err   error
-		goods *domain.Goods
+		err     error
+		goods   *domain.Goods
+		esGoods *domain.ESGoods
 	)
-	//判断品牌是否存在
-	_, err = u.categoryRepo.GetCategoryByID(ctx, r.CategoryID)
+	// 判断品牌是否存在
+	brand, err := u.brandRepo.IsBrandByID(ctx, r.BrandsID)
+	if err != nil {
+		return nil, err
+	}
+
+	cate, err := u.categoryRepo.GetCategoryByID(ctx, r.CategoryID)
 	if err != nil {
 		return nil, errors.New("分类不存在")
 	}
+
 	//判断商品类型是否存在
-	_, err = u.typeRepo.IsExistsByID(ctx, r.TypeID)
+	goodsType, err := u.typeRepo.IsExistsByID(ctx, r.TypeID)
 	if err != nil {
 		return nil, errors.New("商品类型不存在")
 	}
+
 	//判断商品规格和属性是否存在
 	for _, sku := range r.Sku {
-		var sIDs []int64
 
 		//遍历请求的商品规格ID
+		var sIDs []int64
 		for _, info := range sku.Specification {
 			sIDs = append(sIDs, info.SpecificationsID)
 		}
+
 		//根据遍历到的规格ID查询规格是否存在
 		specList, err := u.specificationRepo.ListByIds(ctx, sIDs...)
 		if err != nil {
@@ -191,6 +204,39 @@ func (u *GoodsUsecase) CreateGoods(ctx context.Context, r *domain.Goods) (*domai
 				return err
 			}
 
+			// esModel
+			{
+				esGoods = new(domain.ESGoods)
+				esGoods.Sku = append(esGoods.Sku, domain.EsSku{
+					SkuID:    skuInfo.ID,
+					SkuName:  skuInfo.SkuName,
+					SkuPrice: skuInfo.Price,
+				})
+				esGoods.BrandsID = brand.ID
+				esGoods.BrandName = brand.Name
+				esGoods.CategoryID = cate.ID
+				esGoods.CategoryName = cate.Name
+				esGoods.TypeID = goodsType.ID
+				esGoods.TypeName = goodsType.Name
+				esGoods.Name = goodsType.Name
+				esGoods.ID = goods.ID
+				esGoods.OnSale = goods.OnSale
+				esGoods.ShipFree = goods.ShipFree
+				esGoods.IsNew = goods.IsNew
+				esGoods.IsHot = goods.IsHot
+				esGoods.Name = goods.Name
+				esGoods.GoodsTags = goods.GoodsTags
+				esGoods.ClickNum = goods.ClickNum
+				esGoods.SoldNum = goods.SoldNum
+				esGoods.FavNum = goods.FavNum
+				esGoods.MarketPrice = goods.MarketPrice
+				esGoods.GoodsBrief = goods.GoodsBrief
+			}
+
+			err = u.esGoodsRepo.InsertEsGoods(ctx, esGoods)
+			if err != nil {
+				return err
+			}
 		}
 		return nil
 	})

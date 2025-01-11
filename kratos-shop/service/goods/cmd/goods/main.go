@@ -9,6 +9,7 @@ import (
 	"go.opentelemetry.io/otel/sdk/resource"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"os"
+	"path/filepath"
 
 	"goods/internal/conf"
 
@@ -89,6 +90,15 @@ func main() {
 	if err := setTraceProvider(bc.Trace.Endpoint); err != nil {
 		panic(err)
 	}
+
+	//读取elasticsearch的cacert文件
+	caPath, _ := filepath.Abs("./deploy/elasticsearch/configs/http_ca.crt")
+	ca, err := os.ReadFile(caPath)
+	if err != nil {
+		panic(err)
+	}
+	bc.Data.ElasticSearch.CaCert = ca
+
 	app, cleanup, err := wireApp(bc.Server, bc.Data, &rc, logger)
 	if err != nil {
 		panic(err)
