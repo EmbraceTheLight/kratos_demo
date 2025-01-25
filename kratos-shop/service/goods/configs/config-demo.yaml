@@ -6,6 +6,10 @@ server:
     addr: 0.0.0.0:9002
     timeout: 10s
 data:
+  elastic:
+    addr: https://127.0.0.1:9200
+    username: <Username>
+    password: <PASSWORD>
   mysql:
     driver: mysql
     source: root:<PASSWORD>@tcp(127.0.0.1:3306)/kratos_demo_shop_goods?parseTime=True&loc=Local

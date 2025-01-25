@@ -14,6 +14,7 @@ type GoodsService struct {
 	goods    *biz.GoodsUsecase
 	attr     *biz.GoodsAttrUsecase
 	spec     *biz.SpecificationUsecase
+	esGoods  *biz.EsGoodsUsecase
 	logger   *log.Helper
 }
 
@@ -22,6 +23,7 @@ func NewGoodsService(
 	types *biz.GoodsTypeUsecase,
 	attr *biz.GoodsAttrUsecase,
 	goods *biz.GoodsUsecase,
+	esGoods *biz.EsGoodsUsecase,
 	spec *biz.SpecificationUsecase,
 	logger log.Logger) *GoodsService {
 	return &GoodsService{
@@ -29,6 +31,7 @@ func NewGoodsService(
 		types:    types,
 		goods:    goods,
 		attr:     attr,
+		esGoods:  esGoods,
 		spec:     spec,
 		logger:   log.NewHelper(log.With(logger, "module", "service/category")),
 	}

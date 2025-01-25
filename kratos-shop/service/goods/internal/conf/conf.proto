@@ -42,8 +42,15 @@ message Data {
         google.protobuf.Duration read_timeout  = 6;
         google.protobuf.Duration write_timeout = 7;
     }
-    Mysql mysql = 1;
-    Redis redis = 2;
+    message ElasticSearch {
+        string addr     = 1;
+        string username = 2;
+        string password = 3;
+        bytes ca_cert   = 4;
+    }
+    Mysql mysql                  = 1;
+    Redis redis                  = 2;
+    ElasticSearch elastic_search = 3;
 }
 
 message Trace {
